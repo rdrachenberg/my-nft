@@ -17,8 +17,10 @@ async function loadIpfs() {
     return ipfs
 }
 
-async function addStringToHash(str, node) {
-    node = await loadIpfs();
+async function addStringToHash(str) {
+    let node = await loadIpfs();
+    // str = JSON.stringify(str);
+
     const { cid } = await node.add(str);
 
     return cid
@@ -29,10 +31,12 @@ async function addFileToHash(file) {
 
     const content = await fs.promises.readFile(file);
     const type = mime.getType(file);
-    console.log(type);
-    const { cid } = await node.add(content);
 
+    console.log(type);
+
+    const { cid } = await node.add(content);
     console.log('Here is the file cid hashed -------> ', cid)
+
     return cid
 }
 
@@ -48,8 +52,8 @@ app.post('/add-text', async (req, res) => {
     const body = JSON.stringify(req.body);
     
     try {
-        const loader = await loadIpfs();
-        const cid = await addStringToHash(body, loader);
+        
+        const cid = await addStringToHash(body);
 
         console.log(`This text: ${body}, was sent to the hasher`);
         console.log(`Here is the CID hash on ipfs  ${cid}`);
@@ -67,11 +71,18 @@ app.post('/add-file', async (req, res) => {
     const data = req.body.image;
     console.log(data, '<--- here is the data var');
 
+    let nftObj;
+
     try {
         let hash = await addFileToHash(data);
 
-        // console.log(res);
-
+        nftObj = JSON.stringify({
+            name : "nft-printer",
+            description : "this will be a user generated description. Probably need to add limits to this input on the front end",
+            image: `http://gateway.ipfs.io/ipfs/${hash}`
+        });
+        
+        console.log(nftObj);
 
         return (res.send(`<h2>here is a link to the  hash http://gateway.ipfs.io/ipfs/${hash}</h2>`))
 
