@@ -9,32 +9,40 @@ const path = require('path');
 
 const app = express(); 
 
+let node;
+
 async function loadIpfs() {
     const IPFS  = await import('ipfs-core');
     // const ipfs = await IPFS.create({http: 'http://localhost:5001'});
     const ipfs = await IPFS.create({repo: "ok" + Math.random(), http: "http://localhost:5001" });
+    node = ipfs;
     
     return ipfs
 }
 
+loadIpfs();
+
 async function addStringToHash(str) {
-    let node = await loadIpfs();
+    // let node = await loadIpfs();
     // str = JSON.stringify(str);
 
     const { cid } = await node.add(str);
+    await node.pin.add(cid);
 
     return cid
 }
 
 async function addFileToHash(file) {
-    let node = await loadIpfs();
-
+    // let node = await loadIpfs();
+    // await node;
+    // console.log(node);
     const content = await fs.promises.readFile(file);
     const type = mime.getType(file);
 
     console.log(type);
 
     const { cid } = await node.add(content);
+    await node.pin.add(cid);
     console.log('Here is the file cid hashed -------> ', cid)
 
     return cid
@@ -69,6 +77,9 @@ app.post('/add-text', async (req, res) => {
 
 app.post('/add-file', async (req, res) => {
     const data = req.body.image;
+    const name = req.body.name;
+    const description = req.body.description;
+
     console.log(data, '<--- here is the data var');
 
     let nftObj;
@@ -77,14 +88,18 @@ app.post('/add-file', async (req, res) => {
         let hash = await addFileToHash(data);
 
         nftObj = JSON.stringify({
-            name : "nft-printer",
-            description : "this will be a user generated description. Probably need to add limits to this input on the front end",
+            name : name,
+            description : description,
             image: `http://gateway.ipfs.io/ipfs/${hash}`
         });
         
         console.log(nftObj);
 
-        return (res.send(`<h2>here is a link to the  hash http://gateway.ipfs.io/ipfs/${hash}</h2>`))
+        let finalHash = await addStringToHash(nftObj);
+
+        console.log(finalHash);
+
+        return (res.send(`<h2>here is a link to the  hash https://gateway.ipfs.io/ipfs/${finalHash}</h2>`))
 
     } catch (error) {
         console.log(error);
