@@ -1,48 +1,42 @@
-
-// const ipfsClient = require('ipfs-http-client');
+// *************************************************************************************************
+// require statements and initial variable declaration 
+// *************************************************************************************************
 const express = require('express');
 require('express-async-errors');
-
-const mime = require('mime');
 const fs = require('fs');
-const path = require('path');
-
 const app = express(); 
-
 let node;
+// *************************************************************************************************
 
+
+// *************************************************************************************************
+// function to load an instance of IPFS
+// *************************************************************************************************
 async function loadIpfs() {
     const IPFS  = await import('ipfs-core');
-    // const ipfs = await IPFS.create({http: 'http://localhost:5001'});
     const ipfs = await IPFS.create({repo: "ok" + Math.random(), http: "http://localhost:5001" });
+    
     node = ipfs;
     
     return ipfs
 }
+// *************************************************************************************************
 
 loadIpfs();
 
 async function addStringToHash(str) {
-    // let node = await loadIpfs();
-    // str = JSON.stringify(str);
-
     const { cid } = await node.add(str);
+    
     await node.pin.add(cid);
 
     return cid
 }
 
 async function addFileToHash(file) {
-    // let node = await loadIpfs();
-    // await node;
-    // console.log(node);
-    const content = await fs.promises.readFile(file);
-    const type = mime.getType(file);
+    const content = await fs.promises.readFile(file); // read file contents returns Buffer 
+    const { cid } = await node.add(content); // run add method returns hashed CID
 
-    console.log(type);
-
-    const { cid } = await node.add(content);
-    await node.pin.add(cid);
+    await node.pin.add(cid); // add the cid to pin the content. 
     console.log('Here is the file cid hashed -------> ', cid)
 
     return cid
@@ -51,18 +45,14 @@ async function addFileToHash(file) {
 app.use(express.json());
 
 app.get('/', async (req, res) => {
-
     return res.send(`<h1>Welcome to the backend application</h1>`)
-
 })
 
 app.post('/add-text', async (req, res) => {
     const body = JSON.stringify(req.body);
     
     try {
-        
         const cid = await addStringToHash(body);
-
         console.log(`This text: ${body}, was sent to the hasher`);
         console.log(`Here is the CID hash on ipfs  ${cid}`);
 
@@ -78,11 +68,10 @@ app.post('/add-text', async (req, res) => {
 app.post('/add-file', async (req, res) => {
     const data = req.body.image;
     const name = req.body.name;
+    
     const description = req.body.description;
-
-    console.log(data, '<--- here is the data var');
-
     let nftObj;
+    // console.log(data, '<--- here is the data var');
 
     try {
         let hash = await addFileToHash(data);
