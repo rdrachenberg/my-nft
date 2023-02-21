@@ -15,12 +15,7 @@ import { Upload } from './components/Upload'
 if(!process.env.REACT_APP_PROJECT_ID) {
     Toaster('fail','You need a project id');
     Toaster('info', 'Please get a project id from wallet connect and include in your .env file')
-} else {
-    Toaster('success', 'New Project ID Identified Here');
-    Toaster('success', 'Cleared to proceed 🚀', 1000);
-    // showAlertSuccess('Project ID Identified');
-    // showAlertSuccess('Cleared to proceed 🚀', 1000);
-}
+} 
 
 const projectId = process.env.REACT_APP_PROJECT_ID;
 
@@ -51,37 +46,27 @@ function App() {
     return loggedIn
   }
 
-  // console.log(localStorage.getItem('wagmi.store'))
-  // let account = JSON.parse(localStorage.getItem('wagmi.store')).state.data.account;
-  // console.log(account)
-  // useEffect(() => {
-  //   let account = JSON.parse(localStorage.getItem('wagmi.store')).state.data.account;
-  //   if(account) {
-  //     console.log(account)
-  //   }
-
-  // }, [])
   
   useEffect(() => {
     if(isConnected) { 
-        Toaster('success', `Wallet connected ${address}`);
-    
-      } else {
-      Toaster('info', 'Please connect your wallet', 2000)
+        Toaster('success', `Wallet connected`);
+        Toaster('info', `address: ${address}`, 2000)
+      } 
+  }, [isConnected, address]);
+
+  useEffect(() => {
+    if(!isConnected) {
+      Toaster('fail', 'Wallet disonnected')
     }
-  
-    
-  }, [isConnected, address])
+  }, [isConnected])
   
   
   return (
     <div className="App">
-      
       <WagmiConfig client={wagmiClient}>
-      <Navbar Web3Button={Web3Button} accountLoggedIn={accountLoggedIn}/>
+      <Navbar Web3Button={Web3Button} accountLoggedIn={accountLoggedIn} isConnected={isConnected}/>
         { isConnected ? 
           <div>
-            
             <div className='upload'>
               <Upload address={address}/>
             </div>

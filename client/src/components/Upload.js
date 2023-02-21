@@ -2,11 +2,8 @@ import React, {useState, useEffect, useRef } from 'react';
 import { Buffer } from 'buffer';
 import { create as ipfsHttpClient } from 'ipfs-http-client';
 import { MDBFile, MDBInput, MDBTextArea, MDBBtn, MDBCheckbox, MDBCard, MDBCardImage, MDBCardBody, MDBCardText, MDBCardTitle, MDBListGroupItem, MDBListGroup } from 'mdb-react-ui-kit';
-import { FileHelper } from '../helpers/fileHelper';
-import { NameTester } from '../helpers/nameLimiter';
-import { DescriptionTester } from '../helpers/descriptionLimiter';
-import {ToastContainer, toast} from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { InputChecks } from '../helpers/inputTestChecks';
+
 
 //* ************************************************************************************************
 //* Infura *****************************************************************************************
@@ -24,9 +21,8 @@ export const Upload = (props) => {
     const [uploaded, setUploaded] = useState([]);
     const nameInput = useRef();
     const descriptionInput = useRef();
-    const account = props.address;
-
-    console.log(account, 'account here')
+    const account = props.address; // console.log(account, 'account here');
+    
     //* Create IPFS instance 
     //* ********************************************************************************************
     const ipfs = ipfsHttpClient({
@@ -38,85 +34,22 @@ export const Upload = (props) => {
         }
     })
 
-    //* Create toast alert handlers 
-    //* ********************************************************************************************
-    const showAlertSuccess = (message) => {
-        toast.success(message);
-    }
-
-    const showAlertFail = (message) => {
-        toast.error(message);
-    }
-
-    const showAlertInfo = (message) => {
-        toast.info(message);
-    }
-
     //* function onSubmitHandler handles the user input feilds and validates them. Then the image file is uploaded to IPFS. After hash, final JSON is constructed and hashed one more time for final hash containing all IPFS hashes with image hash.
     //* ********************************************************************************************
     const onSubmitHandler = async (e) => {
         e.preventDefault();
+        // set inputs to state variables
         const form = e.target; // console.log(form);
         const files = form[2].files; // console.log(files);
         const fileTestName = files[0].name; // console.log(fileTestName);
         
+        // set refrences to form values 
         nameInput.current = form[0].value; // console.log(nameInput.current);
         descriptionInput.current = form[1].value; // console.log(descriptionInput.current);
 
-        // REGEX file extention name test
-        let fileTest = FileHelper(fileTestName); // console.log(fileTest);
-
-        // REGEX test to make sure the name is not under 1 & over 20 character limits 
-        let nameTest = NameTester(nameInput.current);
-
-        // REGEX test to make sure the name is not under 1 & over 280 character limits 
-        let descriptionTest = DescriptionTester(descriptionInput.current);
-
-        // check to make sure there is a file attached 
-        if(!files || files.length === 0) {
-            showAlertFail('no files selected', {position: 'top-left'});
-            return;
-        }
+        // function checks input values and runs REGEX test
+        InputChecks(nameInput.current, descriptionInput.current, fileTestName)
         
-        // check to make sure file is in a image file. Should return true
-        if(fileTest) {
-            console.log('** File passed test!!');
-            showAlertSuccess('File inspection passed test...', {position: 'top-right'});
-        
-        } else {
-            showAlertFail('Not a valid file format.', {position: 'top-left'});
-            showAlertInfo('Please use jpg, jpeg, png, or gif formats.', {position: 'top-left'});
-            return;
-        }
-
-        // check to make sure name is more than an empty string
-        if(nameInput.current === '') {
-            showAlertFail('You must name your NFT', {position: 'top-left'});
-            return;
-        }
-
-        // check name REGEX test. Should be less than 20 characters
-        if(nameTest) {
-            console.log('** Name Test passed!');
-        
-        } else {
-            showAlertFail('Sorry, you must submit 1-20 characters', {position: 'top-left'});
-            return;
-        }
-        
-        // check to make sure the description is more than an empty string
-        if(descriptionInput.current === '') {
-            return alert('You must have a description');
-        }
-
-        // check description REGEX test. Should be less than 280 characters
-        if(descriptionTest) {
-            console.log('** Description Test Passed!')
-
-        } else {
-            return alert('Sorry, you have exceeded the character limit of 280 characters');
-        }
-
         // Set image file 
         const file = files[0];
 
@@ -136,6 +69,7 @@ export const Upload = (props) => {
             })
         }
 
+        // format for varialbe cleanup
         const body = options.body;
 
         // create a final hash that will hold all JSON data
@@ -146,7 +80,7 @@ export const Upload = (props) => {
             ...uploaded, {
                 cid: result.cid,
                 path: result.path,
-                meta: JSON.parse(options.body),
+                meta: JSON.parse(body),
                 finalHash: `http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`
             }
         ]);
@@ -175,7 +109,10 @@ export const Upload = (props) => {
                             <h2>Collection</h2>
                         </div>
             : 
-                <></>
+                <>
+                    <h3>Mint input</h3>
+                    <img src='https://cdn.pixabay.com/photo/2020/10/17/14/17/zeppelin-5662247_960_720.png' alt='...'/>
+                </>
             }
         
             <div className='container'>

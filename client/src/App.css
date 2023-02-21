@@ -59,8 +59,9 @@
   filter: drop-shadow(
       1px 2px 8px var(--shadow-color)
     );
+    margin: auto;
 }
 
 .upload {
-  margin-top: 0.01%;
+  margin-top: 1%;
 }
