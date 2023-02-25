@@ -3,7 +3,7 @@ import { Buffer } from 'buffer';
 import { create as ipfsHttpClient } from 'ipfs-http-client';
 import { MDBFile, MDBInput, MDBTextArea, MDBBtn, MDBCheckbox, MDBCard, MDBCardImage, MDBCardBody, MDBCardText, MDBCardTitle, MDBListGroupItem, MDBListGroup } from 'mdb-react-ui-kit';
 import { InputChecks } from '../helpers/inputTestChecks';
-
+import { MyMint } from '../components/Mint'
 
 //* ************************************************************************************************
 //* Infura *****************************************************************************************
@@ -47,7 +47,7 @@ export const Upload = (props) => {
         nameInput.current = form[0].value; // console.log(nameInput.current);
         descriptionInput.current = form[1].value; // console.log(descriptionInput.current);
 
-        // function checks input values and runs REGEX test
+        // function checks input values and runs REGEX test. See import
         InputChecks(nameInput.current, descriptionInput.current, fileTestName)
         
         // Set image file 
@@ -65,7 +65,17 @@ export const Upload = (props) => {
                 name: nameInput.current,
                 description: descriptionInput.current,
                 image: `http://gateway.ipfs.io/ipfs/${imageCID}`,
-                minter: account
+                external_url: `https://my-nft.com SITE HERE`,
+                attributes: [
+                    {
+                        "display_type": "date",
+                        "trait_type": "nft-birthday",
+                        "value": Date.now().toString()
+                    },
+                    {   "trait_type": "OG Minter",
+                        "value": account
+                    }
+                ]
             })
         }
 
@@ -75,13 +85,18 @@ export const Upload = (props) => {
         // create a final hash that will hold all JSON data
         const finalJSONHash = await ipfs.add(body); // console.log(finalJSONHash);
         
+        
+        const sendToChain = await MyMint(`http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`);
+        
+        console.log(sendToChain);
         // set array to hold data. Will be used to send to the server for account nft mint data
         setUploaded([
             ...uploaded, {
                 cid: result.cid,
                 path: result.path,
                 meta: JSON.parse(body),
-                finalHash: `http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`
+                finalHash: `http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`,
+                chainHash: sendToChain.hash
             }
         ]);
 
@@ -104,19 +119,20 @@ export const Upload = (props) => {
     
     return (
         <div>
+            
             {uploaded.length > 0 ? 
                 <div className='collection'>
                             <h2>Collection</h2>
                         </div>
             : 
                 <>
-                    <h3>Mint input</h3>
-                    <img src='https://cdn.pixabay.com/photo/2020/10/17/14/17/zeppelin-5662247_960_720.png' alt='...'/>
+                    <h3 id='mint-input'>Mint input</h3>
+                    {/* <img src='https://cdn.pixabay.com/photo/2020/10/17/14/17/zeppelin-5662247_960_720.png' alt='...'/> */}
                 </>
             }
         
             <div className='container'>
-            
+                
                 <div>
                     {uploaded.length > 0 ?
                         <div>
@@ -129,7 +145,7 @@ export const Upload = (props) => {
                                         <MDBCardBody>
                                             <MDBCardTitle>{upload.meta.name}</MDBCardTitle>
                                             <MDBCardText>{upload.meta.description}</MDBCardText>
-                                            <MDBCardText>Minter: {upload.meta.minter}</MDBCardText>
+                                            <MDBCardText>Minter: {upload.meta.attributes[1].value}</MDBCardText>
                                             <div className='card-buttons'>
                                                 <MDBBtn tag='a' href={upload.finalHash} target='__blank'>IPFS JSON File</MDBBtn>
                                                 <br />

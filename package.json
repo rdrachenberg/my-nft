@@ -20,6 +20,7 @@
     "express-async-errors": "^3.1.1",
     "express-fileupload": "^1.4.0",
     "fs": "^0.0.1-security",
+    "hardhat": "^2.12.7",
     "ipfs-http-client": "^60.0.0",
     "libp2p": "^0.42.2",
     "mime": "^3.0.0",

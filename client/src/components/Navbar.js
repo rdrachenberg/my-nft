@@ -4,9 +4,9 @@ import {MDBNavbar, MDBContainer, MDBIcon, MDBNavbarNav, MDBNavbarItem, MDBNavbar
 export default function Navbar(props) {
     
     const [showNavColorSecond, setShowNavColorSecond] = useState(false);
+    
     const Web3ButtonBtn = props.Web3Button;
-    const isConnected = props.isConnected;
-    console.log(isConnected);
+    const isConnected = props.isConnected; // console.log('wallet connected ',isConnected);
 
     return (
         <>
@@ -40,7 +40,7 @@ export default function Navbar(props) {
                             <MDBNavbarLink href='/pricing'>Pricing</MDBNavbarLink>
                         </MDBNavbarItem>
                         <MDBNavbarItem>
-                            <MDBNavbarLink href='/mint'>Mint</MDBNavbarLink>
+                            <MDBNavbarLink href='/upload'>Mint</MDBNavbarLink>
                         </MDBNavbarItem>
                         
                         </MDBNavbarNav>
@@ -84,7 +84,7 @@ export default function Navbar(props) {
                         
                         </MDBNavbarNav>
                     </MDBCollapse>
-                    <Web3ButtonBtn />  
+                    <Web3ButtonBtn icon='show'/>  
                     </MDBContainer>
                     
                 </MDBNavbar>
