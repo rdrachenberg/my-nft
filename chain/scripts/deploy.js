@@ -9,9 +9,10 @@ const fs = require('fs');
 
 async function main() {
   const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  
+  const setMintFeeDeployment = '050000000000000000'
+  console.log(setMintFeeDeployment);
   const Art = await hre.ethers.getContractFactory("Art");
-  const art = await Art.deploy('My-NFT', 'MYNFT');
+  const art = await Art.deploy('My-NFT', 'MYNFT', setMintFeeDeployment);
 
   await art.deployed();
   

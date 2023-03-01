@@ -1,4 +1,4 @@
-import { useEffect, useState, Suspense, lazy} from 'react';
+import { useEffect, useState, Suspense, lazy, createContext} from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoadingSpinner from "./components/Spinner";
 import './App.css';
@@ -18,11 +18,15 @@ import { Welcome } from './components/Welcome';
 import { About } from './components/About';
 
 
-if(!process.env.REACT_APP_PROJECT_ID) {
+setTimeout(() => {
+  if(!process.env.REACT_APP_PROJECT_ID) {
     Toaster('fail','You need a project id');
     Toaster('info', 'Please get a project id from wallet connect and include in your .env file')
-} 
+  }  
 
+}, 6000);
+ 
+export const NFTCollection = createContext();
 const projectId = process.env.REACT_APP_PROJECT_ID;
 // const localhost = process.env.REACT_APP_RPC_URL.toString();
 // console.log(localhost);
@@ -39,6 +43,7 @@ const wagmiClient = createClient({
 const ethereumClient = new EthereumClient(wagmiClient, chains);
 
 function App() {
+  const [collection, setCollection] = useState([]);
   const [activateEdit, setActivateEdit] = useState(false);
   const [loggedIn, setLoggedIn] =  useState(false);
   const [editorToggle, setEditorToggle] = useState(false);
@@ -53,11 +58,10 @@ function App() {
     console.log(loggedIn, 'loggedIn var');
     return loggedIn
   }
-
   
   useEffect(() => {
     if(isConnected) { 
-        Toaster('success', `Wallet connected`);
+        // Toaster('success', `Wallet connected`);
         
       } else {  
         Toaster('fail', 'Wallet disonnected')
@@ -65,37 +69,35 @@ function App() {
   }, [isConnected]);
 
   
-  
-  
   return (
     <Router>
       <Suspense fallback={<LoadingSpinner />}>
         <div className="App">
           <WagmiConfig client={wagmiClient}>
-            <Navbar Web3Button={Web3Button} accountLoggedIn={accountLoggedIn} isConnected={isConnected}/>
-            {isConnected ? 
-              <Routes>
-                <Route path='/' element={<Home account={address}/>} />
-                <Route path='/upload' element={<Upload address={address}/>} />
-                <Route path='/about' element={<About />} />
-              </Routes>
-              
-              :
-              <Routes>
-                
-                <Route path='*' element={<Welcome />}>
+            <NFTCollection.Provider value={{collection, setCollection}}>
+              <Navbar Web3Button={Web3Button} accountLoggedIn={accountLoggedIn} isConnected={isConnected}/>
+                {isConnected ? 
+                  <Routes>
+                    <Route path='/' element={<Home account={address}/>} />
+                    <Route path='/upload' element={<Upload address={address}/>} />
+                    <Route path='/about' element={<About />} />
+                  </Routes>
+                  
+                  :
+                  <Routes>
+                    
+                    <Route path='*' element={<Welcome />}>
 
-                </Route>
-              </Routes>
-            }
-              
-              
-                    { activateEdit ? 
-                      <div><PhotoEditorSDK /></div>
-                    :
-                      <></>
-                    }
-                 
+                    </Route>
+                  </Routes>
+                }
+
+                { activateEdit ? 
+                  <div><PhotoEditorSDK /></div>
+                :
+                  <></>
+                }
+            </NFTCollection.Provider>
           </WagmiConfig>
           <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
           <ToastContainer /> 

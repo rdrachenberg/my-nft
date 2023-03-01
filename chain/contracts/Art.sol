@@ -1,21 +1,31 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.4;
 import 'hardhat/console.sol';
-
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract Art is ERC721 {
 
     uint256 public tokenCount;
+    uint256 public mintFee;
+    address public owner;
 
     mapping (uint256 => string) private _tokenURIs;
 
     constructor(
         string memory name,
-        string memory symbol
+        string memory symbol,
+        uint256 fee
     ) ERC721(name, symbol) {
         tokenCount = 1;
+        mintFee = fee;
+        owner = payable(msg.sender);
+        
     }
+
+    
 
     function _setTokenURI(uint256 _tokenId, string memory _tokenURI) internal virtual  {
         require( _exists(_tokenId),"ERC721Metadata: URI set to a token that doesnt exist");
@@ -23,13 +33,18 @@ contract Art is ERC721 {
         _tokenURIs[_tokenId] = _tokenURI;
     }
 
-    function mint(string memory _tokenURI) public {
+    function mint(string memory _tokenURI) public payable{
         require(!isTokenURIEmpty(_tokenURI), 'You must provide a valid Token URI');
+        
+        console.log(mintFee);
+        require( msg.value >= mintFee, 'You must spend more');
         _safeMint(msg.sender, tokenCount);
         _setTokenURI(tokenCount, _tokenURI);
         tokenCount++;
         
-        console.log('mint function finished');
+        console.log('mint fee');
+        console.log(mintFee);
+        console.log('NFT mint successful');
     }
 
     function tokenURI(uint256 _tokenId) public view override returns(string memory) {

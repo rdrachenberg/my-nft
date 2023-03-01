@@ -41,7 +41,12 @@ export const Upload = (props) => {
         // set inputs to state variables
         const form = e.target; // console.log(form);
         const files = form[2].files; // console.log(files);
-        const fileTestName = files[0].name; // console.log(fileTestName);
+        const fileTestName = files[0].name; 
+
+        let fileFormatName = fileTestName.split('.')[1];
+        fileFormatName = '.' + fileFormatName;
+        console.log(fileFormatName)
+        console.log(fileTestName);
         
         // set refrences to form values 
         nameInput.current = form[0].value; // console.log(nameInput.current);
@@ -89,16 +94,20 @@ export const Upload = (props) => {
         const sendToChain = await MyMint(`http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`);
         
         console.log(sendToChain);
+
+        
+            setUploaded([
+                ...uploaded, {
+                    cid: result.cid,
+                    path: result.path,
+                    meta: JSON.parse(body),
+                    finalHash: `http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`,
+                    chainHash: sendToChain.hash
+                }
+            ]);
+        
         // set array to hold data. Will be used to send to the server for account nft mint data
-        setUploaded([
-            ...uploaded, {
-                cid: result.cid,
-                path: result.path,
-                meta: JSON.parse(body),
-                finalHash: `http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`,
-                chainHash: sendToChain.hash
-            }
-        ]);
+        
 
         // const finalResult = await fetch('http://localhost:8080/add-file', options);
 
@@ -127,7 +136,6 @@ export const Upload = (props) => {
             : 
                 <>
                     <h3 id='mint-input'>Mint input</h3>
-                    {/* <img src='https://cdn.pixabay.com/photo/2020/10/17/14/17/zeppelin-5662247_960_720.png' alt='...'/> */}
                 </>
             }
         

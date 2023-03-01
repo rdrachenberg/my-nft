@@ -10,12 +10,28 @@ task('accounts', 'Print out a list of accounts', async (taskArgs, hre) => {
 });
 
 task('deploy', 'Deploys the My-NFT', async(taskArgs, hre) => {
-  const Art = await hre.ethers.getContractFactory('Art');
+  const Art = await hre.ethers.getContractFactory("Art");
   const art = await Art.deploy('My-NFT', 'MYNFT');
 
   await art.deployed();
+  
+  console.log('NFT Contract Deployed here ---> ', art.address);
 
-  console.log('contract deployed here: ', art.address)
+  const contractsDir = '../client/src/contracts';
+
+  if(!fs.existsSync(contractsDir)) {
+    fs.mkdirSync(contractsDir);
+  };
+
+  fs.writeFileSync(
+    contractsDir + '/my-nft-address.json',
+    JSON.stringify(
+      {
+        MyNFT: art.address
+      },
+      undefined, 2
+    )
+  );
 
 
 })
