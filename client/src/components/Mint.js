@@ -33,6 +33,8 @@ export async function MyMint(myNFTTokenURI, paymentToggle) {
             
             if(!tx) {
                 valueToPass = '0';
+            } else {
+                valueToPass = await contract.mintFee();
             }
             console.log('value to pass here ---> ',valueToPass);
             const data = await contract.mint(myNFTTokenURI, paymentToggle, { value: valueToPass._hex });;

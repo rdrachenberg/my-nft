@@ -6,14 +6,18 @@ import { Toaster } from './toaster'
 export const DripTransfer = async (signer, paymentToggle) => {
     
     const contractAddress = '0x20f663cea80face82acdfa3aae6862d246ce0333';
+    const dripTaxVault = '0xbff8a1f9b5165b787a00659216d7313354d25472'
     const userAccount = signer.getAddress();
 
     const myNFT =  myNFTAddress();
+    const myNFTABI = require('../artifacts/contracts/Art.sol/Art.json').abi;
 
     console.log(contractAddress);
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const DripContract = new ethers.Contract(contractAddress, dripABI, signer);
-    const dripBalance = await DripContract.balanceOf(userAccount);
+    let dripBalance = await DripContract.balanceOf(userAccount);
+    const Art = new ethers.Contract(myNFT, myNFTABI, signer);
+    const mintFee = await Art.mintFee();
     
     const formatBalance = parseInt(dripBalance._hex);
     
@@ -21,7 +25,7 @@ export const DripTransfer = async (signer, paymentToggle) => {
     const bnbBalance = await provider.getBalance(userAccount);
     const bnbFormatter = ethers.utils.formatUnits(bnbBalance);
 
-    const minimumBNB = ethers.utils.parseUnits('0.05', 'ether')
+    const minimumBNB = await mintFee;
     
     // ******************************************
     //* logs ************************************
@@ -46,8 +50,13 @@ export const DripTransfer = async (signer, paymentToggle) => {
     if(dripOrBNB === 'drip') {
         await DripContract.approve(myNFT, dripToTransfer);
         
-        await DripContract.transfer(myNFT, dripToTransfer);
-        Toaster('success', 'drip successfully transfered ', '3000');
+        const tx = await DripContract.transfer(dripTaxVault, dripToTransfer);
+        await tx.wait();
+        console.log(tx);
+
+        dripBalance = ethers.utils.formatEther(await DripContract.balanceOf(dripTaxVault), 'ether');
+        console.log('drip balance here --- > ', dripBalance)
+        Toaster('success', `drip successfully transfered ${dripBalance}`, '3000');
         return
     } else {
         // await DripContract.approve(contractAddress, minimumBNB);
