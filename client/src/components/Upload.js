@@ -4,6 +4,7 @@ import { create as ipfsHttpClient } from 'ipfs-http-client';
 import { MDBFile, MDBInput, MDBTextArea, MDBBtn, MDBCheckbox, MDBCard, MDBCardImage, MDBCardBody, MDBCardText, MDBCardTitle, MDBListGroupItem, MDBListGroup } from 'mdb-react-ui-kit';
 import { InputChecks } from '../helpers/inputTestChecks';
 import { MyMint } from '../components/Mint'
+import { ToggleSwitch } from './ToggleSwitch';
 
 //* ************************************************************************************************
 //* Infura *****************************************************************************************
@@ -19,10 +20,15 @@ export const Upload = (props) => {
     //* State variables 
     //* ********************************************************************************************
     const [uploaded, setUploaded] = useState([]);
+    const [paymentToggle, setPaymentToggle] = useState(false);
     const nameInput = useRef();
     const descriptionInput = useRef();
     const account = props.address; // console.log(account, 'account here');
     
+    const onChangeToggle = (checked) => {
+        setPaymentToggle(checked)
+        console.log(paymentToggle);
+    }
     //* Create IPFS instance 
     //* ********************************************************************************************
     const ipfs = ipfsHttpClient({
@@ -40,8 +46,9 @@ export const Upload = (props) => {
         e.preventDefault();
         // set inputs to state variables
         const form = e.target; // console.log(form);
-        const files = form[2].files; // console.log(files);
+        const files = form[3].files; // console.log(files);
         const fileTestName = files[0].name; 
+        
 
         let fileFormatName = fileTestName.split('.')[1];
         fileFormatName = '.' + fileFormatName;
@@ -49,8 +56,8 @@ export const Upload = (props) => {
         console.log(fileTestName);
         
         // set refrences to form values 
-        nameInput.current = form[0].value; // console.log(nameInput.current);
-        descriptionInput.current = form[1].value; // console.log(descriptionInput.current);
+        nameInput.current = form[1].value; // console.log(nameInput.current);
+        descriptionInput.current = form[2].value; // console.log(descriptionInput.current);
 
         // function checks input values and runs REGEX test. See import
         InputChecks(nameInput.current, descriptionInput.current, fileTestName)
@@ -91,7 +98,7 @@ export const Upload = (props) => {
         const finalJSONHash = await ipfs.add(body); // console.log(finalJSONHash);
         
         
-        const sendToChain = await MyMint(`http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`);
+        const sendToChain = await MyMint(`http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`, paymentToggle);
         
         console.log(sendToChain);
 
@@ -131,8 +138,8 @@ export const Upload = (props) => {
             
             {uploaded.length > 0 ? 
                 <div className='collection'>
-                            <h2>Collection</h2>
-                        </div>
+                    <h2>Collection</h2>
+                </div>
             : 
                 <>
                     <h3 id='mint-input'>Mint input</h3>
@@ -173,7 +180,9 @@ export const Upload = (props) => {
                         </div>
                         
                     :
-                        <form onSubmit={onSubmitHandler} className={'form'}>    
+                        <form onSubmit={onSubmitHandler} className={'form'}>
+                            <ToggleSwitch id='payment' checked={paymentToggle} setChecked={setPaymentToggle} onChange={onChangeToggle}/>
+                            
                             <MDBInput id='name' wrapperClass='mb-4' label='Name' required />
                             <MDBTextArea wrapperClass='mb-4' id='description' rows={4} label='Description' required />
                             <MDBFile id='file-upload' type='file' name='file' htmlFor='file-upload' required/>

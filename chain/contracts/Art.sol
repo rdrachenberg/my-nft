@@ -25,19 +25,30 @@ contract Art is ERC721 {
         
     }
 
-    
-
+/*
+* @dev Sets the to _tokenId in the _tokenURIs mapping.
+* @param _tokenId (mint #) and _tokenURI will be a string to the IPFS data hash JSON .
+* @return
+*/
     function _setTokenURI(uint256 _tokenId, string memory _tokenURI) internal virtual  {
         require( _exists(_tokenId),"ERC721Metadata: URI set to a token that doesnt exist");
         
         _tokenURIs[_tokenId] = _tokenURI;
     }
 
-    function mint(string memory _tokenURI) public payable{
+    function setMintFee(uint fee)public returns(uint256 mintF) {
+            mintFee = fee;
+        return mintFee;
+    }
+
+    function mint(string memory _tokenURI, bool isDrip) public payable{
         require(!isTokenURIEmpty(_tokenURI), 'You must provide a valid Token URI');
-        
         console.log(mintFee);
-        require( msg.value >= mintFee, 'You must spend more');
+        
+        if(isDrip = false) {
+            require( msg.value >= mintFee, 'You must spend more');
+        }
+        
         _safeMint(msg.sender, tokenCount);
         _setTokenURI(tokenCount, _tokenURI);
         tokenCount++;

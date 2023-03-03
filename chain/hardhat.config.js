@@ -1,6 +1,7 @@
 require("@nomicfoundation/hardhat-toolbox");
 const fs = require('fs');
 
+
 task('accounts', 'Print out a list of accounts', async (taskArgs, hre) => {
   const accounts = await hre.ethers.getSigners();
 
@@ -8,6 +9,11 @@ task('accounts', 'Print out a list of accounts', async (taskArgs, hre) => {
     console.log(account.address);
   }
 });
+
+// task('drip', 'Adds Drip token to main account', async (taskArgs, hre) => {
+//   const signer = await hre.ethers.getSigners();
+//   const DripContract = await new hre.ethers.Contract()
+// })
 
 task('deploy', 'Deploys the My-NFT', async(taskArgs, hre) => {
   const Art = await hre.ethers.getContractFactory("Art");

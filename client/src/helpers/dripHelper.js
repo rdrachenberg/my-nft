@@ -1,8 +1,9 @@
-import { BigNumber, ethers } from 'ethers';
+import {  ethers } from 'ethers';
 import { dripABI } from '../abis/dripABI';
 import { myNFTAddress } from '../components/MyNFTAddress';
+import { Toaster } from './toaster'
 
-export const DripTransfer = async (signer) => {
+export const DripTransfer = async (signer, paymentToggle) => {
     
     const contractAddress = '0x20f663cea80face82acdfa3aae6862d246ce0333';
     const userAccount = signer.getAddress();
@@ -10,11 +11,12 @@ export const DripTransfer = async (signer) => {
     const myNFT =  myNFTAddress();
 
     console.log(contractAddress);
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
     const DripContract = new ethers.Contract(contractAddress, dripABI, signer);
     const dripBalance = await DripContract.balanceOf(userAccount);
     
     const formatBalance = parseInt(dripBalance._hex);
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    
 
     const bnbBalance = await provider.getBalance(userAccount);
     const bnbFormatter = ethers.utils.formatUnits(bnbBalance);
@@ -29,7 +31,7 @@ export const DripTransfer = async (signer) => {
     console.log('bnb balance: ' + bnbFormatter);
 
     const balanceMeetsMinimum = (formatBalance >= 10 ? true : false || bnbBalance > minimumBNB ? true : false);
-    const dripOrBNB = (formatBalance >= 10 ? 'drip' : 'bnb');
+    const dripOrBNB = (paymentToggle ? 'drip' : 'bnb');
 
     if(!balanceMeetsMinimum) {
         console.log('sorry, you need at least 10 Drip or 0.05 BNB to mint')
@@ -37,9 +39,16 @@ export const DripTransfer = async (signer) => {
     }
 
     console.log(dripOrBNB);
+    console.log(ethers.utils.parseUnits('10', 'ether'));
+    const dripToTransfer = ethers.utils.parseUnits('10', 'ether');
+    console.log(dripToTransfer);
 
     if(dripOrBNB === 'drip') {
-        await DripContract.approve(contractAddress, minimumBNB);
+        await DripContract.approve(myNFT, dripToTransfer);
+        
+        await DripContract.transfer(myNFT, dripToTransfer);
+        Toaster('success', 'drip successfully transfered ', '3000');
+        return
     } else {
         // await DripContract.approve(contractAddress, minimumBNB);
         const tx = {
@@ -49,13 +58,12 @@ export const DripTransfer = async (signer) => {
             gasPrice: ethers.utils.hexlify(parseInt(await provider.getGasPrice())),
         }
 
+        return tx
         // const transaction = await signe.sendTransaction(tx);
 
         // console.log(transaction);
 
         // return transaction
-
-        return tx
     }
 
 }
