@@ -3,7 +3,8 @@ import { dripABI } from '../abis/dripABI';
 import { myNFTAddress } from '../components/MyNFTAddress';
 import { Toaster } from './toaster'
 
-export const DripTransfer = async (signer, paymentToggle) => {
+
+export const DripTransfer = async (signer, paymentToggle, signer2) => {
     
     const contractAddress = '0x20f663cea80face82acdfa3aae6862d246ce0333';
     const dripTaxVault = '0xbff8a1f9b5165b787a00659216d7313354d25472'
@@ -18,7 +19,9 @@ export const DripTransfer = async (signer, paymentToggle) => {
     let dripBalance = await DripContract.balanceOf(userAccount);
     const Art = new ethers.Contract(myNFT, myNFTABI, signer);
     const mintFee = await Art.mintFee();
-    
+    // const signee = await signer2
+    // console.log(signee);
+
     const formatBalance = parseInt(dripBalance._hex);
     
 
@@ -66,6 +69,8 @@ export const DripTransfer = async (signer, paymentToggle) => {
             gasLimit: ethers.utils.hexlify(10000),
             gasPrice: ethers.utils.hexlify(parseInt(await provider.getGasPrice())),
         }
+
+        // await BNBTransferToFountain(signee);
 
         return tx
         // const transaction = await signe.sendTransaction(tx);

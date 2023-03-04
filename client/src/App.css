@@ -95,14 +95,22 @@
 }
 
 .payment-toggle {
-  
- border: solid yellowgreen 1px;
+ border: solid #F0B90B 2px;
  width: 20%;
  border-radius: 20px;
  padding: 1%;
  margin-bottom: 1%;
  background-color: white;
 
+}
+
+.payment-toggle-drip {
+  border: solid #0557AD 2px;
+  width: 20%;
+ border-radius: 20px;
+ padding: 1%;
+ margin-bottom: 1%;
+ background-color: #e7f6fb;
 }
 
 .upload {

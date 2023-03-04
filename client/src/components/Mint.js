@@ -13,6 +13,7 @@ export async function MyMint(myNFTTokenURI, paymentToggle) {
     console.log(abi);
     console.log(myNFTTokenURI);
     console.log(MyNFTContractAddress);
+    const provider2 = new ethers.providers.JsonRpcProvider();
 
     
     if(typeof window.ethereum !== 'undefined') {
@@ -23,10 +24,11 @@ export async function MyMint(myNFTTokenURI, paymentToggle) {
         const contractAddress = '0x20f663cea80face82acdfa3aae6862d246ce0333';
         const DripContract = new ethers.Contract(contractAddress, dripABI, signer)
         const dripBalance = await DripContract.balanceOf(address);
+        const signer2 = provider2.getSigner(MyNFTContractAddress)
         console.log(dripBalance);
         
             try {
-            const tx = await DripTransfer(signer, paymentToggle);
+            const tx = await DripTransfer(signer, paymentToggle, signer2);
             // console.log(await DripTransfer(signer));
            console.log(tx);
             let valueToPass = ethers.utils.parseUnits('0.05', 'ether');
