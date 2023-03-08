@@ -1,6 +1,6 @@
-import { useEffect, useState, Suspense, lazy, createContext} from 'react';
+import { useEffect, useState} from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoadingSpinner from "./components/Spinner";
+
 import './App.css';
 import { EthereumClient, modalConnectors, walletConnectProvider } from '@web3modal/ethereum'
 import { Web3Button, Web3Modal } from '@web3modal/react'
@@ -26,7 +26,7 @@ setTimeout(() => {
 
 }, 6000);
  
-export const NFTCollection = createContext();
+
 const projectId = process.env.REACT_APP_PROJECT_ID;
 // const localhost = process.env.REACT_APP_RPC_URL.toString();
 // console.log(localhost);
@@ -71,38 +71,33 @@ function App() {
   
   return (
     <Router>
-      <Suspense fallback={<LoadingSpinner />}>
-        <div className="App">
-          <WagmiConfig client={wagmiClient}>
-            <NFTCollection.Provider value={{collection, setCollection}}>
-              <Navbar Web3Button={Web3Button} accountLoggedIn={accountLoggedIn} isConnected={isConnected}/>
-                {isConnected ? 
-                  <Routes>
-                    <Route path='/' element={<Home account={address}/>} />
-                    <Route path='/upload' element={<Upload address={address}/>} />
-                    <Route path='/about' element={<About />} />
-                  </Routes>
-                  
-                  :
-                  <Routes>
-                    
-                    <Route path='*' element={<Welcome />}>
+      <div className="App">
+        <WagmiConfig client={wagmiClient}>
+          <Navbar Web3Button={Web3Button} accountLoggedIn={accountLoggedIn} isConnected={isConnected}/>
+          {isConnected ? 
+            <Routes>
+              <Route path='/' element={<Home account={address}/>} />
+              <Route path='/upload' element={<Upload address={address}/>} />
+              <Route path='/about' element={<About />} />
+            </Routes>
+            
+            :
+            <Routes>
+              
+              <Route path='*' element={<Welcome />}>
 
-                    </Route>
-                  </Routes>
-                }
-
-                { activateEdit ? 
-                  <div><PhotoEditorSDK /></div>
-                :
-                  <></>
-                }
-            </NFTCollection.Provider>
-          </WagmiConfig>
-          <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
-          <ToastContainer /> 
-        </div>
-      </Suspense>
+              </Route>
+            </Routes>
+          }
+          { activateEdit ? 
+            <div><PhotoEditorSDK /></div>
+          :
+            <></>
+          }
+        </WagmiConfig>
+        <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
+        <ToastContainer /> 
+      </div>
     </Router>
   );
 }

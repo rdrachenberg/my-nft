@@ -2,11 +2,12 @@ import { useState } from "react";
 import { ethers } from 'ethers';
 import { Balance } from "./Balance";
 import { myNFTAddress } from "./MyNFTAddress";
+import { stakeViewer } from "../helpers/stakeHelper";
 
 
 export const Home =  (props) => {
-
-    const {collection, setCollection} = useState([]);
+    
+    const [staker, setStaker] = useState('');
     const MyNFTContractAddress =  myNFTAddress();
     
     const account = props.account;
@@ -17,9 +18,14 @@ export const Home =  (props) => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const contract = new ethers.Contract(MyNFTContractAddress, abi, provider);
-
+        
         
     }
+
+    useState( async () => {
+        const stake = await stakeViewer();
+        setStaker(stake)
+    }, [])
 
 
     return (
@@ -27,8 +33,13 @@ export const Home =  (props) => {
             <h2>Welcome to My-NFT</h2>
             <h3>Your connected account is</h3>
             <p>{account}</p>
-            
             <Balance account={account}/>
+            <div className='fountain-stake'>
+                <h4>Locked in Fountain: {staker} BNB</h4>
+            </div>
+            <div className='faucet-vault'>
+                <h4>Sent to Drip Faucet Vault: </h4>
+            </div>
            
             
         </div>

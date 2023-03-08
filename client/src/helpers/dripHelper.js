@@ -4,11 +4,12 @@ import { myNFTAddress } from '../components/MyNFTAddress';
 import { Toaster } from './toaster'
 
 
-export const DripTransfer = async (signer, paymentToggle, signer2) => {
+export const DripTransfer = async (signer, paymentToggle) => {
     
     const contractAddress = '0x20f663cea80face82acdfa3aae6862d246ce0333';
     const dripTaxVault = '0xbff8a1f9b5165b787a00659216d7313354d25472'
-    const userAccount = signer.getAddress();
+    const userAccount = await signer.getAddress();
+    console.log(userAccount);
 
     const myNFT =  myNFTAddress();
     const myNFTABI = require('../artifacts/contracts/Art.sol/Art.json').abi;
@@ -37,7 +38,7 @@ export const DripTransfer = async (signer, paymentToggle, signer2) => {
     console.log(formatBalance);
     console.log('bnb balance: ' + bnbFormatter);
 
-    const balanceMeetsMinimum = (formatBalance >= 10 ? true : false || bnbBalance > minimumBNB ? true : false);
+    const balanceMeetsMinimum = (formatBalance >= 10 ? true : false || bnbBalance > minimumBNB._hex ? true : false);
     const dripOrBNB = (paymentToggle ? 'drip' : 'bnb');
 
     if(!balanceMeetsMinimum) {
@@ -70,14 +71,6 @@ export const DripTransfer = async (signer, paymentToggle, signer2) => {
             gasPrice: ethers.utils.hexlify(parseInt(await provider.getGasPrice())),
         }
 
-        // await BNBTransferToFountain(signee);
-
         return tx
-        // const transaction = await signe.sendTransaction(tx);
-
-        // console.log(transaction);
-
-        // return transaction
     }
-
 }

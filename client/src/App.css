@@ -2,6 +2,34 @@
   text-align: center;
 }
 
+.balance h4{
+  border: solid #F0B90B 1px;
+  max-width: 30%;
+  margin: auto;
+  margin-bottom: 0.25%;
+  padding: 0.25%;
+  border-radius: 20px;
+  background-color: #0557AD;
+  color: white;
+  box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px;
+  font-size: 98%;
+}
+
+.btn {
+  margin-top: 2%;
+}
+
+.btn-primary {
+  border: solid #F0B90B 0.25px
+}
+
+.btn-secondary {
+  border: solid #4AB8EF 1px;
+  background-color: #3265B9;
+  box-shadow: 0 4px 9px -4px #3b71ca;
+  color: white;
+}
+
 .bnb-logo img{
   
   height: 90%;
@@ -80,6 +108,32 @@
     margin: auto;
 }
 
+.fountain-stake h4{
+  border: solid #1F83E4 2px;
+  max-width: 30%;
+  margin: auto;
+  padding: 0.25%;
+  border-radius: 20px;
+  background-color: #0557AD;
+  color: white;
+  box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px;
+  font-size: 98%;
+  margin-bottom: 0.25%;
+}
+
+.faucet-vault h4{
+  border: solid black 1px;
+  max-width: 30%;
+  margin: auto;
+  padding: 0.25%;
+  border-radius: 20px;
+  background-color: #0557AD;
+  color: white;
+  box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px;
+  font-size: 98%;
+  margin-bottom: 0.25%;
+}
+
 .loading-spinner {
   width: 50px;
   height: 50px;
@@ -88,6 +142,7 @@
   border-radius: 50%;
   animation: spinner 1.5s linear infinite;
 }
+
 
 #mint-input {
   margin-top: 2%;

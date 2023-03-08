@@ -6,23 +6,24 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract Art is ERC721 {
+contract Art is ERC721, Pausable, Ownable{
+    using Counters for Counters.Counter;
 
-    uint256 public tokenCount;
+    Counters.Counter public tokenCount;
+
     uint256 public mintFee;
-    address public owner;
+    uint[] public NftItem;
 
     mapping (uint256 => string) private _tokenURIs;
+    mapping (address => mapping(uint => uint)) private _ownedTokens;
 
     constructor(
         string memory name,
         string memory symbol,
         uint256 fee
     ) ERC721(name, symbol) {
-        tokenCount = 1;
+        tokenCount.current();
         mintFee = fee;
-        owner = payable(msg.sender);
-        
     }
 
 /*
@@ -36,7 +37,7 @@ contract Art is ERC721 {
         _tokenURIs[_tokenId] = _tokenURI;
     }
 
-    function setMintFee(uint fee)public returns(uint256 mintF) {
+    function setMintFee(uint fee)public returns(uint256) {
             mintFee = fee;
         return mintFee;
     }
@@ -49,13 +50,15 @@ contract Art is ERC721 {
             require( msg.value >= mintFee, 'You must spend more');
         }
         
-        _safeMint(msg.sender, tokenCount);
-        _setTokenURI(tokenCount, _tokenURI);
-        tokenCount++;
+        _safeMint(msg.sender, tokenCount.current());
+        _setTokenURI(tokenCount.current(), _tokenURI);
+        tokenCount.increment();
         
         console.log('mint fee');
         console.log(mintFee);
         console.log('NFT mint successful');
+        console.log('Token Count');
+        console.log(tokenCount.current());
     }
 
     function tokenURI(uint256 _tokenId) public view override returns(string memory) {
@@ -66,14 +69,29 @@ contract Art is ERC721 {
 
     function isTokenURIEmpty(string memory _test) pure public returns(bool) {
         bytes memory check = bytes(_test);
+        bool checker = check.length > 0 ? false : true;
+        
+        return checker;
+    }
 
-        if(check.length > 0) {
-            return false;
-        
-        } else {
-            return true;
+    function ownerWithdrawToFountain() public onlyOwner {
+        require(address(this).balance > 0, "There is nothing to collect. Balance is 0");
+        payable(owner()).transfer(address(this).balance);
+    }
+
+    function getOwned() public view returns(NftItem[] memory) {
+        uint ownedItemsNum = ERC721.balanceOf(msg.sender);
+        NftItem[] memory items= new NftItem(ownedItemsNum);
+        for(uint i = 0; i < ownedItemsNum; i++) {
+            uint tokenID = ownerByIndex(msg.sender, i);
+            NftItem storage item = _id[tokenID];
+            items[i] = item;
         }
-        
-        // return check.length > 0 ? false : true;
+        return items;
+    }
+
+    function ownerByIndex(address owner, uint index) public view returns(uint) {
+        require(index < ERC721.balanceOf(owner), "index out of bounds");
+        return _ownedTokens[[owner][index]];
     }
 }

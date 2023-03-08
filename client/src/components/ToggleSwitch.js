@@ -16,7 +16,7 @@ export const ToggleSwitch = (props) => {
     <div className= {checked ? 'payment-toggle-drip':'payment-toggle'} checked={checked} type='checkbox'>
     {checked? 'Drip': ''}
       <Switch onChange={handleChange} checked={checked} 
-        handleDiameter={35}
+        handleDiameter={25}
         offColor="#F0B90B"
         onColor="#FFFFFF"
         offHandleColor="#1E1F22"
@@ -36,7 +36,7 @@ export const ToggleSwitch = (props) => {
             </div>
         }
       />
-      {checked? '':'BNB'}
+      {checked? '':' BNB'}
     </div>
     
   );

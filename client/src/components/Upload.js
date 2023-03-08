@@ -66,7 +66,7 @@ export const Upload = (props) => {
         const file = files[0];
 
         // get the image file hash from ipfs. To be used in final hash. 
-        const result = await ipfs.add(file); // console.log(result);
+        const result = await ipfs.add(file, {pin: true}); // console.log(result);
         
         // create constant equal to the hash, which is result.path
         const imageCID = result.path; // console.log(imageCID);
@@ -95,7 +95,7 @@ export const Upload = (props) => {
         const body = options.body;
 
         // create a final hash that will hold all JSON data
-        const finalJSONHash = await ipfs.add(body); // console.log(finalJSONHash);
+        const finalJSONHash = await ipfs.add(body, {pin: true}); // console.log(finalJSONHash);
         
         
         const sendToChain = await MyMint(`http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`, paymentToggle);
@@ -135,7 +135,6 @@ export const Upload = (props) => {
     
     return (
         <div>
-            
             {uploaded.length > 0 ? 
                 <div className='collection'>
                     <h2>Collection</h2>
@@ -145,32 +144,29 @@ export const Upload = (props) => {
                     <h3 id='mint-input'>Mint input</h3>
                 </>
             }
-        
-            <div className='container'>
-                
+            <div className='container'>  
                 <div>
                     {uploaded.length > 0 ?
                         <div>
-                        
-                        <div className='cards'>
-                            {uploaded.map((upload) => 
-                                <div  key={upload.finalHash}>
-                                    <MDBCard style={{width: '18rem', maxWidth:'18rem', padding: '10px', margin: '10px', backgroundColor: '#2D7595'}}>
-                                        <MDBCardImage style={{height: '180px'}} src={upload.meta.image} alt='...' position='top'/>
-                                        <MDBCardBody>
-                                            <MDBCardTitle>{upload.meta.name}</MDBCardTitle>
-                                            <MDBCardText>{upload.meta.description}</MDBCardText>
-                                            <MDBCardText>Minter: {upload.meta.attributes[1].value}</MDBCardText>
-                                            <div className='card-buttons'>
-                                                <MDBBtn tag='a' href={upload.finalHash} target='__blank'>IPFS JSON File</MDBBtn>
-                                                <br />
-                                                <MDBBtn tag='a' href={upload.meta.image} target='__blank'>IPFS Image Hash</MDBBtn>
-                                            </div>
-                                        </MDBCardBody>
-                                    </MDBCard>
-                                </div>
-                            )}
-                        </div>
+                            <div className='cards'>
+                                {uploaded.map((upload) => 
+                                    <div  key={upload.finalHash}>
+                                        <MDBCard style={{width: '18rem', maxWidth:'18rem', padding: '10px', margin: '10px', backgroundColor: '#2D7595'}}>
+                                            <MDBCardImage style={{height: '180px'}} src={upload.meta.image} alt='...' position='top'/>
+                                            <MDBCardBody>
+                                                <MDBCardTitle>{upload.meta.name}</MDBCardTitle>
+                                                <MDBCardText>{upload.meta.description}</MDBCardText>
+                                                <MDBCardText>Minter: {upload.meta.attributes[1].value}</MDBCardText>
+                                                <div className='card-buttons'>
+                                                    <MDBBtn tag='a' href={upload.finalHash} target='__blank'>IPFS JSON File</MDBBtn>
+                                                    <br />
+                                                    <MDBBtn tag='a' href={upload.meta.image} target='__blank'>IPFS Image Hash</MDBBtn>
+                                                </div>
+                                            </MDBCardBody>
+                                        </MDBCard>
+                                    </div>
+                                )}
+                            </div>
                             <form onSubmit={onSubmitHandler} className={'form'}>    
                                 <MDBInput id='name' wrapperClass='mb-4' label='Name' required />
                                 <MDBTextArea wrapperClass='mb-4' id='description' rows={4} label='Description' required />
@@ -178,15 +174,13 @@ export const Upload = (props) => {
                                 <MDBBtn type='submit' className='mb-4' block>Upload your NFT</MDBBtn>
                             </form>
                         </div>
-                        
                     :
                         <form onSubmit={onSubmitHandler} className={'form'}>
                             <ToggleSwitch id='payment' checked={paymentToggle} setChecked={setPaymentToggle} onChange={onChangeToggle}/>
-                            
                             <MDBInput id='name' wrapperClass='mb-4' label='Name' required />
                             <MDBTextArea wrapperClass='mb-4' id='description' rows={4} label='Description' required />
                             <MDBFile id='file-upload' type='file' name='file' htmlFor='file-upload' required/>
-                            <MDBBtn type='submit' className='mb-4' block>Upload your NFT</MDBBtn>
+                            <MDBBtn type='submit' className='mb-4' checked={paymentToggle} color={paymentToggle? 'secondary': 'primary'} block>{paymentToggle ? 'Approve' : 'Upload your NFT'}</MDBBtn>
                         </form>
                     }
                 </div>
