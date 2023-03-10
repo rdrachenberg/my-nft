@@ -21,13 +21,31 @@ export const Upload = (props) => {
     //* ********************************************************************************************
     const [uploaded, setUploaded] = useState([]);
     const [paymentToggle, setPaymentToggle] = useState(false);
+    
     const nameInput = useRef();
+    const [nameTester, setNameTester] = useState('');
+    
     const descriptionInput = useRef();
+    const [descriptionTester, setDescriptionTeter] = useState('');
+    
+    const [fileTester, setFileTester] = useState('');
     const account = props.address; // console.log(account, 'account here');
+    const setDripSentToVault = props.setDripSentToVault;
+    // console.log(setDripSentToVault);
+    const dripSentToVault = props.dripSentToVault;
+    // console.log(props)
+    console.log(dripSentToVault);
+    // const [dripSentToVault, setDripSentToVault] = props;
+    let addDripSentToValut = dripSentToVault;
     
     const onChangeToggle = (checked) => {
         setPaymentToggle(checked)
-        console.log(paymentToggle);
+        // console.log(paymentToggle);
+    }
+
+    const isNotEmpty = (e) => {
+        return nameTester.length & descriptionTester.length & fileTester.length
+
     }
     //* Create IPFS instance 
     //* ********************************************************************************************
@@ -98,26 +116,28 @@ export const Upload = (props) => {
         const finalJSONHash = await ipfs.add(body, {pin: true}); // console.log(finalJSONHash);
         
         
-        const sendToChain = await MyMint(`http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`, paymentToggle);
+        const sendToChain = await MyMint(`http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`, paymentToggle, setDripSentToVault, dripSentToVault);
         
         console.log(sendToChain);
-
         
-            setUploaded([
-                ...uploaded, {
-                    cid: result.cid,
-                    path: result.path,
-                    meta: JSON.parse(body),
-                    finalHash: `http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`,
-                    chainHash: sendToChain.hash
-                }
-            ]);
+        
+        addDripSentToValut = sendToChain[1] === null ? 0 : addDripSentToValut += sendToChain[1];
+        
+        console.log(addDripSentToValut);
+        setDripSentToVault(addDripSentToValut);
+
+        setUploaded([
+            ...uploaded, {
+                cid: result.cid,
+                path: result.path,
+                meta: JSON.parse(body),
+                finalHash: `http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`,
+                chainHash: sendToChain[0].hash
+            }
+        ]);
         
         // set array to hold data. Will be used to send to the server for account nft mint data
-        
-
         // const finalResult = await fetch('http://localhost:8080/add-file', options);
-
         // console.log(finalResult);
 
         // TODO create post request to server to record minting results
@@ -131,7 +151,13 @@ export const Upload = (props) => {
         if(uploaded.length > 0) {
             console.log(uploaded);
         }
-    })
+        if(addDripSentToValut !== 0) {
+            setDripSentToVault(addDripSentToValut);
+            console.log('this hit here', dripSentToVault);
+        }
+            
+        
+    }, [setDripSentToVault, addDripSentToValut, uploaded, dripSentToVault])
     
     return (
         <div>
@@ -141,7 +167,7 @@ export const Upload = (props) => {
                 </div>
             : 
                 <>
-                    <h3 id='mint-input'>Mint input</h3>
+                    <h3 id='mint-input'>Mint</h3>
                 </>
             }
             <div className='container'>  
@@ -177,10 +203,10 @@ export const Upload = (props) => {
                     :
                         <form onSubmit={onSubmitHandler} className={'form'}>
                             <ToggleSwitch id='payment' checked={paymentToggle} setChecked={setPaymentToggle} onChange={onChangeToggle}/>
-                            <MDBInput id='name' wrapperClass='mb-4' label='Name' required />
-                            <MDBTextArea wrapperClass='mb-4' id='description' rows={4} label='Description' required />
-                            <MDBFile id='file-upload' type='file' name='file' htmlFor='file-upload' required/>
-                            <MDBBtn type='submit' className='mb-4' checked={paymentToggle} color={paymentToggle? 'secondary': 'primary'} block>{paymentToggle ? 'Approve' : 'Upload your NFT'}</MDBBtn>
+                            <MDBInput id='name' wrapperClass='mb-4' label='Name' onChange={e => setNameTester(e.target.value)} value={nameTester} required />
+                            <MDBTextArea wrapperClass='mb-4' id='description' rows={4} label='Description' onChange={e => setDescriptionTeter(e.target.value)} value={descriptionTester} required />
+                            <MDBFile id='file-upload' type='file' name='file' htmlFor='file-upload' onChange={e => setFileTester(e.target.value)} value={fileTester} required/>
+                            <MDBBtn type='submit' className='mb-4' checked={paymentToggle} color={paymentToggle? 'secondary': 'primary'} disabled={!isNotEmpty()} block>{paymentToggle ? 'Approve' : 'Upload your NFT'}</MDBBtn>
                         </form>
                     }
                 </div>

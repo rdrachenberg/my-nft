@@ -1,4 +1,4 @@
-import { useEffect, useState} from 'react';
+import { useEffect, useState, createContext} from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import './App.css';
@@ -16,6 +16,7 @@ import { Upload } from './components/Upload';
 import { Home } from './components/Home';
 import { Welcome } from './components/Welcome';
 import { About } from './components/About';
+
 
 
 setTimeout(() => {
@@ -36,7 +37,7 @@ const chains = [localOrMain];
 const { provider } = configureChains(chains, [walletConnectProvider({ projectId })]);
 const wagmiClient = createClient({
     autoConnect: true,
-    connectors: modalConnectors({ version: '1', appName: 'My-NFT', chains, projectId}),
+    connectors: modalConnectors({ version: '2', appName: 'My-NFT', chains, projectId}),
     provider
 });
 
@@ -48,6 +49,7 @@ function App() {
   const [loggedIn, setLoggedIn] =  useState(false);
   const [editorToggle, setEditorToggle] = useState(false);
   const {address, isConnected} = useAccount();
+  const [dripSentToVault, setDripSentToVault] = useState(0);
   
   const activateEditor = () => {
     setActivateEdit(!activateEdit);
@@ -62,7 +64,7 @@ function App() {
   useEffect(() => {
     if(isConnected) { 
         // Toaster('success', `Wallet connected`);
-        
+        // setDripSentToVault(dripSentToVault);
       } else {  
         Toaster('fail', 'Wallet disonnected')
       } 
@@ -72,29 +74,31 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <WagmiConfig client={wagmiClient}>
-          <Navbar Web3Button={Web3Button} accountLoggedIn={accountLoggedIn} isConnected={isConnected}/>
-          {isConnected ? 
-            <Routes>
-              <Route path='/' element={<Home account={address}/>} />
-              <Route path='/upload' element={<Upload address={address}/>} />
-              <Route path='/about' element={<About />} />
-            </Routes>
-            
-            :
-            <Routes>
+        
+          <WagmiConfig client={wagmiClient}>
+            <Navbar Web3Button={Web3Button} accountLoggedIn={accountLoggedIn} isConnected={isConnected}/>
+            {isConnected ? 
+              <Routes>
+                <Route path='/' element={<Home account={address} dripSentToVault={dripSentToVault}/>} />
+                <Route path='/upload' element={<Upload address={address} setDripSentToVault={setDripSentToVault} dripSentToVault={dripSentToVault} />} />
+                <Route path='/about' element={<About />} />
+              </Routes>
               
-              <Route path='*' element={<Welcome />}>
+              :
+              <Routes>
+                
+                <Route path='*' element={<Welcome />}>
 
-              </Route>
-            </Routes>
-          }
-          { activateEdit ? 
-            <div><PhotoEditorSDK /></div>
-          :
-            <></>
-          }
-        </WagmiConfig>
+                </Route>
+              </Routes>
+            }
+            { activateEdit ? 
+              <div><PhotoEditorSDK /></div>
+            :
+              <></>
+            }
+          </WagmiConfig>
+          
         <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
         <ToastContainer /> 
       </div>

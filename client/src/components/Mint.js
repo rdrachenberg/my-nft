@@ -6,14 +6,13 @@ import { BNBTransferToFountain } from "../helpers/bnbHelper";
 import { Toaster } from '../helpers/toaster.js';
 import { dripABI } from "../abis/dripABI";
 import { withdrawl } from "../helpers/withdrawHelper";
-import { stakeViewer } from '../helpers/stakeHelper';
 
-
-export async function MyMint(myNFTTokenURI, paymentToggle) {
+export async function MyMint(myNFTTokenURI, paymentToggle, setDripSentToVault, dripSentToVault) {
     const MyNFTContractAddress =  myNFTAddress();
-
-    const abi = require('../artifacts/contracts/Art.sol/Art.json').abi
     
+    const abi = require('../artifacts/contracts/Art.sol/Art.json').abi
+    // console.log(setDripSentToVault);
+    console.log(dripSentToVault);
     // console.log(abi);
     // console.log(myNFTTokenURI);
     // console.log(MyNFTContractAddress);
@@ -34,22 +33,26 @@ export async function MyMint(myNFTTokenURI, paymentToggle) {
         console.log(dripBalance);
         
         try {
-            const tx = await DripTransfer(signer, paymentToggle);
+            const tx = await DripTransfer(signer, paymentToggle, setDripSentToVault, dripSentToVault);
             if(tx) console.log(tx);
             
-            let valueToPass = ethers.utils.parseUnits('500.05', 'ether');
+            let BNBValueToPass = ethers.utils.parseUnits('500.05', 'ether');
         
-            if(!tx) {
-                valueToPass = '0';
+            if(tx.drip !== undefined) {
+                console.log(tx.drip);
+                BNBValueToPass = '0';
+                
+                await setDripSentToVault(tx.drip)
             
             } else {
-                // valueToPass = await contract.mintFee();
+                BNBValueToPass = await contract.mintFee();
             }
         
-            // console.log('value to pass here ---> ',valueToPass);
+            // console.log('value to pass here ---> ',BNBValueToPass);
             
-            const data = await contract.mint(myNFTTokenURI, paymentToggle, { value: valueToPass._hex });;
+            const data = await contract.mint(myNFTTokenURI, paymentToggle, { value: BNBValueToPass._hex });;
             console.log(data);
+            const modData = [data, tx.drip? tx.drip: null];
 
             if(data) {
                 Toaster('success', 'Minted NFT hash: ' + data.hash, '3000');
@@ -75,8 +78,8 @@ export async function MyMint(myNFTTokenURI, paymentToggle) {
 
                     try {
                         const fountainTransfer = await BNBTransferToFountain(balanceOfContract);
-                        fountainTransfer.wait();
-                        console.log(fountainTransfer)
+                        let receipt = await fountainTransfer.wait();
+                        console.log(receipt)
                         
                     } catch (error) {
                         console.log(error);
@@ -85,7 +88,7 @@ export async function MyMint(myNFTTokenURI, paymentToggle) {
                     }
                 }
                 
-                return data
+                return modData
             }
     
         } catch (error) {

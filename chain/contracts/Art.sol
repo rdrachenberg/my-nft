@@ -12,8 +12,7 @@ contract Art is ERC721, Pausable, Ownable{
     Counters.Counter public tokenCount;
 
     uint256 public mintFee;
-    uint[] public NftItem;
-
+    
     mapping (uint256 => string) private _tokenURIs;
     mapping (address => mapping(uint => uint)) private _ownedTokens;
 
@@ -77,21 +76,5 @@ contract Art is ERC721, Pausable, Ownable{
     function ownerWithdrawToFountain() public onlyOwner {
         require(address(this).balance > 0, "There is nothing to collect. Balance is 0");
         payable(owner()).transfer(address(this).balance);
-    }
-
-    function getOwned() public view returns(NftItem[] memory) {
-        uint ownedItemsNum = ERC721.balanceOf(msg.sender);
-        NftItem[] memory items= new NftItem(ownedItemsNum);
-        for(uint i = 0; i < ownedItemsNum; i++) {
-            uint tokenID = ownerByIndex(msg.sender, i);
-            NftItem storage item = _id[tokenID];
-            items[i] = item;
-        }
-        return items;
-    }
-
-    function ownerByIndex(address owner, uint index) public view returns(uint) {
-        require(index < ERC721.balanceOf(owner), "index out of bounds");
-        return _ownedTokens[[owner][index]];
     }
 }

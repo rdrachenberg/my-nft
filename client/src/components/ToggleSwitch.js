@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import Switch from 'react-switch';
 
 export const ToggleSwitch = (props) => {
-    console.log(props)
+    // console.log(props)
     
     const [checked, setChecked] = useState(false);
-    console.log(checked);
+    // console.log(checked);
 
     const handleChange = (checked)=> {
         setChecked(checked)

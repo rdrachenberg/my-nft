@@ -1,16 +1,19 @@
+import {useContext, useEffect, useState} from 'react'
 import {  ethers } from 'ethers';
 import { dripABI } from '../abis/dripABI';
 import { myNFTAddress } from '../components/MyNFTAddress';
 import { Toaster } from './toaster'
 
 
-export const DripTransfer = async (signer, paymentToggle) => {
-    
+
+
+export const DripTransfer = async (signer, paymentToggle, setDripSentToVault, dripSentToVault) => {
+    // const dripAccountSent = useContext(DripContext);
     const contractAddress = '0x20f663cea80face82acdfa3aae6862d246ce0333';
     const dripTaxVault = '0xbff8a1f9b5165b787a00659216d7313354d25472'
     const userAccount = await signer.getAddress();
     console.log(userAccount);
-
+    
     const myNFT =  myNFTAddress();
     const myNFTABI = require('../artifacts/contracts/Art.sol/Art.json').abi;
 
@@ -30,7 +33,7 @@ export const DripTransfer = async (signer, paymentToggle) => {
     const bnbFormatter = ethers.utils.formatUnits(bnbBalance);
 
     const minimumBNB = await mintFee;
-    
+    let tx;
     // ******************************************
     //* logs ************************************
     console.log(minimumBNB);
@@ -47,30 +50,55 @@ export const DripTransfer = async (signer, paymentToggle) => {
     }
 
     console.log(dripOrBNB);
-    console.log(ethers.utils.parseUnits('10', 'ether'));
-    const dripToTransfer = ethers.utils.parseUnits('10', 'ether');
+    const setDripAmount = '20'
+    console.log(ethers.utils.parseUnits(setDripAmount, 'ether'));
+    const dripToTransfer = ethers.utils.parseUnits(setDripAmount, 'ether');
     console.log(dripToTransfer);
 
+
     if(dripOrBNB === 'drip') {
-        await DripContract.approve(myNFT, dripToTransfer);
+        const approval = await DripContract.approve(myNFT, dripToTransfer._hex);
+        const approvalRreceipt = await approval.wait();
+        console.log(approvalRreceipt);
+
+        tx = await DripContract.transfer(dripTaxVault, dripToTransfer._hex);
+        let receipt = await tx.wait();
+        console.log(receipt);
         
-        const tx = await DripContract.transfer(dripTaxVault, dripToTransfer);
-        await tx.wait();
-        console.log(tx);
+        let dripAmount = Number(setDripAmount);
+        if(dripSentToVault === isNaN || dripSentToVault === undefined) {
+            dripSentToVault = 0;
+        }
+        console.log(dripAmount);
+        console.log(dripSentToVault)
+        dripAmount = dripAmount + dripSentToVault;
+        console.log(dripAmount);
+        
+        
+        setDripSentToVault(dripAmount);
+        // console.log(setDripSentToVault);
+        console.log('vars ==== ', dripSentToVault)
+        console.log('drip sent to valut here -->',dripSentToVault);
 
         dripBalance = ethers.utils.formatEther(await DripContract.balanceOf(dripTaxVault), 'ether');
-        console.log('drip balance here --- > ', dripBalance)
-        Toaster('success', `drip successfully transfered ${dripBalance}`, '3000');
-        return
+        console.log('sent here --- > ', dripAmount)
+        Toaster('success', `${dripAmount} drip successfully transfered`, '3000');
+        
+        tx = {
+            drip: dripAmount
+        }
+        
+
     } else {
         // await DripContract.approve(contractAddress, minimumBNB);
-        const tx = {
+        tx = {
             value: minimumBNB._hex,
             nonce: await provider.getTransactionCount(userAccount, 'latest'),
             gasLimit: ethers.utils.hexlify(10000),
             gasPrice: ethers.utils.hexlify(parseInt(await provider.getGasPrice())),
         }
 
-        return tx
+        
     }
+    return tx
 }
