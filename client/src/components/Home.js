@@ -1,8 +1,9 @@
-import { Children, useState } from "react";
+import { useState } from "react";
 import { ethers } from 'ethers';
 import { Balance } from "./Balance";
 import { myNFTAddress } from "./MyNFTAddress";
 import { stakeViewer } from "../helpers/stakeHelper";
+
 
 
 export const Home = (props) => {
@@ -14,9 +15,9 @@ export const Home = (props) => {
     const abi = require('../artifacts/contracts/Art.sol/Art.json').abi;
 
     const dripSentToVault = props.dripSentToVault;
-    console.log(dripSentToVault);
-    console.log(props);
-    console.log(Children)
+    // console.log(dripSentToVault);
+    // console.log(props);
+    // console.log(Children)
 
     if(window.ethereum !== undefined) {
         // console.log('window detected');
@@ -26,9 +27,12 @@ export const Home = (props) => {
 
     }
 
+    
+
     useState( async () => {
         const stake = await stakeViewer();
         setStaker(stake)
+        console.log(props)
     }, [])
 
 
@@ -44,8 +48,9 @@ export const Home = (props) => {
             <div className='faucet-vault'>
                 <h4>Sent to Drip Faucet Vault: {dripSentToVault}</h4>
             </div>
-           
-            
+            <div>
+                
+            </div>
         </div>
     )
 }

@@ -18,19 +18,19 @@ async function main() {
   
 //   console.log(dripABI)
 
-  const dripWhaleSigner = await hre.ethers.getImpersonatedSigner('0xa79e5c4f0018dd018d86a4f85b68b9f40e4a8ca2')
+  const dripWhaleSigner = await hre.ethers.getImpersonatedSigner('0x28c480aa2d9770277b05c35008c5594d60bd2001')
 //   const singer = dripWhaleSigner.getSigners();
-  console.log(dripWhaleSigner);
+  // console.log(dripWhaleSigner);
 //   console.log(signer);
 
   const Drip = await new ethers.Contract(contractAddress, dripABI, dripWhaleSigner);
   
   const dripAmount = hre.ethers.utils.parseUnits('500', 'ether');
   const dripTransfer = await Drip.transfer('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266', dripAmount);
-
+  const receipt = await dripTransfer.wait();
   
   
-  console.log('Drip transfered ---> ', dripTransfer);
+  console.log('Drip transfered ---> ', receipt);
 
 
   

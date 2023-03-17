@@ -16,6 +16,7 @@ export async function MyMint(myNFTTokenURI, paymentToggle, setDripSentToVault, d
     // console.log(abi);
     // console.log(myNFTTokenURI);
     // console.log(MyNFTContractAddress);
+    console.log(window.ethereum);
     
     if(typeof window.ethereum !== 'undefined') {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -52,7 +53,8 @@ export async function MyMint(myNFTTokenURI, paymentToggle, setDripSentToVault, d
             
             const data = await contract.mint(myNFTTokenURI, paymentToggle, { value: BNBValueToPass._hex });;
             console.log(data);
-            const modData = [data, tx.drip? tx.drip: null];
+            const receipt = await data.wait();
+            const modData = [receipt, tx.drip? tx.drip: null];
 
             if(data) {
                 Toaster('success', 'Minted NFT hash: ' + data.hash, '3000');
@@ -96,5 +98,8 @@ export async function MyMint(myNFTTokenURI, paymentToggle, setDripSentToVault, d
 
             return error
         }
+    } else {
+        console.log('metamask window not detected')
+        return new Error('This is a freaking error')
     }
 }

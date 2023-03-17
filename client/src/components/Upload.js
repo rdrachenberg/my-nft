@@ -13,6 +13,8 @@ const projectId = process.env.REACT_APP_INFURA_PROJECT_ID; // Infura id
 const projectSecretKey = process.env.REACT_APP_INFURA_PROJECT_SECRET; // Infura key
 const auth = "Basic " + Buffer.from(projectId + ":" + projectSecretKey).toString('base64'); // Infura required basic auth format to be passed in headers
 
+let options;
+
 //* ************************************************************************************************
 //* functional component to upload file, name, and description to ipfs ****************************
 //* ************************************************************************************************
@@ -34,7 +36,7 @@ export const Upload = (props) => {
     // console.log(setDripSentToVault);
     const dripSentToVault = props.dripSentToVault;
     // console.log(props)
-    console.log(dripSentToVault);
+    // console.log(dripSentToVault);
     // const [dripSentToVault, setDripSentToVault] = props;
     let addDripSentToValut = dripSentToVault;
     
@@ -90,7 +92,8 @@ export const Upload = (props) => {
         const imageCID = result.path; // console.log(imageCID);
 
         // construct a options object with the body having the relevant final JSON
-        const options = {
+        options = {
+            method: 'POST',
             body: JSON.stringify({
                 name: nameInput.current,
                 description: descriptionInput.current,
@@ -121,10 +124,10 @@ export const Upload = (props) => {
         console.log(sendToChain);
         
         
-        addDripSentToValut = sendToChain[1] === null ? 0 : addDripSentToValut += sendToChain[1];
+        addDripSentToValut = (sendToChain[1] === null ? 0 : sendToChain[1]);
         
         console.log(addDripSentToValut);
-        setDripSentToVault(addDripSentToValut);
+        // setDripSentToVault(addDripSentToValut => addDripSentToValut + sendToChain[1]);
 
         setUploaded([
             ...uploaded, {
@@ -132,17 +135,29 @@ export const Upload = (props) => {
                 path: result.path,
                 meta: JSON.parse(body),
                 finalHash: `http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`,
-                chainHash: sendToChain[0].hash
+                chainHash: sendToChain[0].transactionHash
             }
         ]);
-        
+        let optionsSecond = {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                meta: JSON.parse(body),
+                finalHash: `http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`,
+                chainHash: sendToChain[0].transactionHash
+            
+            })
+        }
         // set array to hold data. Will be used to send to the server for account nft mint data
         // const finalResult = await fetch('http://localhost:8080/add-file', options);
         // console.log(finalResult);
+        const sendToBackend = await fetch('http://localhost:8080/api/add-file', optionsSecond);
+            console.log(optionsSecond.body)
+            await sendToBackend();
 
         // TODO create post request to server to record minting results
 
-        console.log(uploaded);  //! uncomment on production 
+        // console.log(uploaded);  //! comment out on production 
 
         form.reset();
     }
@@ -151,10 +166,13 @@ export const Upload = (props) => {
         if(uploaded.length > 0) {
             console.log(uploaded);
         }
-        if(addDripSentToValut !== 0) {
-            setDripSentToVault(addDripSentToValut);
+        
+        if(addDripSentToValut !== 0 && options !== {}) {
+            setDripSentToVault(addDripSentToValut => addDripSentToValut);
             console.log('this hit here', dripSentToVault);
+            
         }
+        
             
         
     }, [setDripSentToVault, addDripSentToValut, uploaded, dripSentToVault])
@@ -193,12 +211,7 @@ export const Upload = (props) => {
                                     </div>
                                 )}
                             </div>
-                            <form onSubmit={onSubmitHandler} className={'form'}>    
-                                <MDBInput id='name' wrapperClass='mb-4' label='Name' required />
-                                <MDBTextArea wrapperClass='mb-4' id='description' rows={4} label='Description' required />
-                                <MDBFile id='file-upload' type='file' name='file' htmlFor='file-upload' required/>
-                                <MDBBtn type='submit' className='mb-4' block>Upload your NFT</MDBBtn>
-                            </form>
+                            
                         </div>
                     :
                         <form onSubmit={onSubmitHandler} className={'form'}>

@@ -20,7 +20,7 @@ export const BNBTransferToFountain = async (amount) => {
     })
 
     let receipt = await tx.wait();
-    console.log('here is the tx receipt for the fountain stake ', receipt);
+    console.log('here is the tx receipt for the resevior stake ', receipt);
 
     // const stats = await resContract.statsOf(signer.address);
 

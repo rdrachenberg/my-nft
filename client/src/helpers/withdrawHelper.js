@@ -11,13 +11,13 @@ export const withdrawl = async () => {
     
     const contractDeployed = new ethers.Contract(MyNFTContractAddress, abi, deploySigner);
     let nonce = await provider.getTransactionCount(deploySigner.address, 'latest');
-    nonce++;
+    // nonce++;
 
     console.log('nonce here', nonce);
 
     const withdrawToWallet = await contractDeployed.ownerWithdrawToFountain({nonce: nonce});
-    withdrawToWallet.wait();
-    console.log(withdrawToWallet);
+    const tx = await withdrawToWallet.wait();
+    console.log(tx);
 
-    return withdrawToWallet
+    return tx
 }

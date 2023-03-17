@@ -25,7 +25,7 @@ export const DripTransfer = async (signer, paymentToggle, setDripSentToVault, dr
     const mintFee = await Art.mintFee();
     // const signee = await signer2
     // console.log(signee);
-
+    console.log(dripBalance);
     const formatBalance = parseInt(dripBalance._hex);
     
 
@@ -66,16 +66,18 @@ export const DripTransfer = async (signer, paymentToggle, setDripSentToVault, dr
         console.log(receipt);
         
         let dripAmount = Number(setDripAmount);
-        if(dripSentToVault === isNaN || dripSentToVault === undefined) {
+        
+        if(isNaN(dripSentToVault) || dripSentToVault === undefined) {
             dripSentToVault = 0;
         }
+        
         console.log(dripAmount);
         console.log(dripSentToVault)
         dripAmount = dripAmount + dripSentToVault;
         console.log(dripAmount);
         
         
-        setDripSentToVault(dripAmount);
+        setDripSentToVault(dripSentToVault => dripSentToVault + dripAmount);
         // console.log(setDripSentToVault);
         console.log('vars ==== ', dripSentToVault)
         console.log('drip sent to valut here -->',dripSentToVault);

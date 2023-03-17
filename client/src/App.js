@@ -60,15 +60,20 @@ function App() {
     console.log(loggedIn, 'loggedIn var');
     return loggedIn
   }
+
+  const handleDripChange = () => {
+    setDripSentToVault(dripSentToVault);
+    return dripSentToVault
+  }
   
   useEffect(() => {
     if(isConnected) { 
         // Toaster('success', `Wallet connected`);
-        // setDripSentToVault(dripSentToVault);
+        // handleDripChange();
       } else {  
         Toaster('fail', 'Wallet disonnected')
       } 
-  }, [isConnected]);
+  }, [isConnected, setDripSentToVault, dripSentToVault]);
 
   
   return (
@@ -78,9 +83,9 @@ function App() {
           <WagmiConfig client={wagmiClient}>
             <Navbar Web3Button={Web3Button} accountLoggedIn={accountLoggedIn} isConnected={isConnected}/>
             {isConnected ? 
-              <Routes>
-                <Route path='/' element={<Home account={address} dripSentToVault={dripSentToVault}/>} />
-                <Route path='/upload' element={<Upload address={address} setDripSentToVault={setDripSentToVault} dripSentToVault={dripSentToVault} />} />
+              <Routes dripSentToVault={dripSentToVault}>
+                <Route path='/' element={<Home account={address} dripSentToVault={dripSentToVault} />} />
+                <Route path='/upload' element={<Upload address={address} setDripSentToVault={setDripSentToVault} dripSentToVault={dripSentToVault} onChange={handleDripChange}/>} />
                 <Route path='/about' element={<About />} />
               </Routes>
               
