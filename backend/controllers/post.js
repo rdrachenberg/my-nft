@@ -11,14 +11,12 @@ module.exports = {
         // }
         models.Post.find()
             .then((posts) => {
-                // console.log(posts);
+                
+                console.log(posts);
+
                 res.send(posts);
             })
-            .then(() => {
-
-            })
-            .catch(next);
-            
+            .catch(next);       
     },
 
     post: (req, res, next) => {

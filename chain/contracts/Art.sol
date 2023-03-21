@@ -27,7 +27,7 @@ contract Art is ERC721, Pausable, Ownable{
 
 /*
 * @dev Sets the to _tokenId in the _tokenURIs mapping.
-* @param _tokenId (mint #) and _tokenURI will be a string to the IPFS data hash JSON .
+* @param Accepts _tokenId (mint #) and _tokenURI (will be a string to the IPFS data hash JSON).
 * @return
 */
     function _setTokenURI(uint256 _tokenId, string memory _tokenURI) internal virtual  {
@@ -36,7 +36,7 @@ contract Art is ERC721, Pausable, Ownable{
         _tokenURIs[_tokenId] = _tokenURI;
     }
 
-    function setMintFee(uint fee)public returns(uint256) {
+    function setMintFee(uint fee) public onlyOwner returns(uint256) {
             mintFee = fee;
         return mintFee;
     }
