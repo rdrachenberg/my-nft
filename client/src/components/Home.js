@@ -91,8 +91,6 @@ export const Home = (props) => {
     return (
         <div>
             <h2>Welcome to My-NFT</h2>
-            <h3>Your connected account is</h3>
-            <p>{account}</p>
             <Balance account={account}/>
             <div className='balance'>
                 <h4>BNB Locked in Reservoir: {bnbStaker}</h4>
@@ -101,7 +99,7 @@ export const Home = (props) => {
                 <h4>Drops Locked in Reservoir: {staker}</h4>
             </div>
             <div className='faucet-vault'>
-                <h4>Sent to Drip Faucet Vault: {dripSentToVault}</h4>
+                <h4>Drip Sent to Faucet Vault: {dripSentToVault}</h4>
             </div>
             <div className='display-container'>
                 {nftCollection.length > 0 ? 

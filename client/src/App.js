@@ -73,6 +73,7 @@ function App() {
         // handleDripChange();
       } else {  
         Toaster('fail', 'Wallet disonnected')
+        
       } 
   }, [isConnected, setDripSentToVault, dripSentToVault]);
 
@@ -85,7 +86,7 @@ function App() {
             <Navbar Web3Button={Web3Button} accountLoggedIn={accountLoggedIn} isConnected={isConnected}/>
             {isConnected ? 
               <Routes dripSentToVault={dripSentToVault}>
-                <Route path='/' element={<Home account={address} dripSentToVault={dripSentToVault} />} />
+                <Route path='/' element={<Home account={address} dripSentToVault={dripSentToVault} isConnected={isConnected}/>} />
                 <Route path='/upload' element={<Upload address={address} setDripSentToVault={setDripSentToVault} dripSentToVault={dripSentToVault} onChange={handleDripChange}/>} />
                 <Route path='/about' element={<About />} />
               </Routes>

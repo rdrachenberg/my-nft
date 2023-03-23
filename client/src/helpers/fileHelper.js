@@ -1,5 +1,5 @@
 export const FileHelper = (file) => {
-    let regex = new RegExp(/[^\s]+(.*?).(jpg|jpeg|png|gif|JPG|JPEG|PNG|GIF)$/);
+    let regex = new RegExp(/[^\s]+(.*?).(jpg|jpeg|png|gif|heic|JPG|JPEG|PNG|GIF|HEIC)$/);
 
     if(file === null) {
         return false;

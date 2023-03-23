@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {MDBNavbar, MDBContainer, MDBIcon, MDBNavbarNav, MDBNavbarItem, MDBNavbarLink, MDBNavbarToggler, MDBNavbarBrand, MDBCollapse } from 'mdb-react-ui-kit';
+import {MDBNavbar, MDBContainer, MDBIcon, MDBNavbarNav, MDBNavbarItem, MDBNavbarLink, MDBNavbarToggler, MDBNavbarBrand, MDBCollapse , MDBCo} from 'mdb-react-ui-kit';
 
 export default function Navbar(props) {
     
@@ -42,10 +42,14 @@ export default function Navbar(props) {
                         <MDBNavbarItem>
                             <MDBNavbarLink href='/upload'>Mint</MDBNavbarLink>
                         </MDBNavbarItem>
+                        <div className='col-9'></div>
+                        <MDBNavbarItem id='connect-button'>
+                            <MDBNavbarLink><Web3ButtonBtn /></MDBNavbarLink>
+                        </MDBNavbarItem>
                         
                         </MDBNavbarNav>
                     </MDBCollapse>
-                    <Web3ButtonBtn />  
+                      
                     </MDBContainer>
                     
                 </MDBNavbar>
@@ -81,12 +85,13 @@ export default function Navbar(props) {
                         <MDBNavbarItem>
                             <MDBNavbarLink href='/about'>About</MDBNavbarLink>
                         </MDBNavbarItem>
-                        
+                        <div className='col-9'></div>
+                        <MDBNavbarItem id='connect-button'>
+                            <MDBNavbarLink><Web3ButtonBtn /></MDBNavbarLink>
+                        </MDBNavbarItem>
                         </MDBNavbarNav>
-                    </MDBCollapse>
-                    <Web3ButtonBtn icon='show'/>  
+                    </MDBCollapse>      
                     </MDBContainer>
-                    
                 </MDBNavbar>
             </>
             }
