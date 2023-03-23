@@ -65,9 +65,7 @@ export const Home = (props) => {
                 <h4>Sent to Drip Faucet Vault: {dripSentToVault}</h4>
             </div>
             <div className='display-container'>
-                
-                {nftCollection.length > 100 ? 
-                    
+                {nftCollection.length > 0 ? 
                     <div className='cards'>
                         {nftCollection.map((nfts) =>
                             <div key={nfts.finalHash}>
