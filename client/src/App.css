@@ -31,28 +31,11 @@
 }
 
 .bnb-logo img{
-  
   height: 90%;
   width: 90%;
   padding-left: 20%;
   padding: 2%;
   border-radius: 30px;
-}
-
-.drip-logo img{
-  height: 60%;
-  width: 60%;
-  padding-left: 1%;
-  margin-left: 20%;
-  border-radius: 30px;
-  
-}
-
-.nft-form {
-  margin: 5px;
-  padding: 10px;
-  display: flexbox;
-  padding: 50px;
 }
 
 .card {
@@ -89,6 +72,10 @@
   margin: auto
 }
 
+.containter-none {
+  padding: 2%;
+}
+
 .display-container {
   display: flex;
   flex-flow: row wrap;
@@ -96,6 +83,19 @@
   align-items: center;
   justify-content: center;
   margin: auto;
+}
+
+.drip-logo img{
+  height: 60%;
+  width: 60%;
+  padding-left: 1%;
+  margin-left: 20%;
+  border-radius: 30px;
+  
+}
+
+.footer {
+  margin-top: 30%;
 }
 
 .form {
@@ -146,10 +146,29 @@
   animation: spinner 1.5s linear infinite;
 }
 
-
 #mint-input {
   margin-top: 2%;
   margin-bottom: 3%;
+}
+
+#minter-none {
+  width: 100%;
+  margin-top: 5%;
+  border: solid black 0.25px;
+  -webkit-box-shadow:0px 0px 18px 5px rgba(45, 255, 115, 0.835);
+  -moz-box-shadow: 0px 0px 18px 5px rgba(45, 255, 115, 0.835);
+  box-shadow: 0px 0px 18px 5px rgba(45,255,196,0.5);
+  text-shadow: -0.5px 0.5px 1px #000,
+				  1px 1px 2px #000,
+				  1px -1px 0 #000,
+				  -1px -1px 0 #000;
+}
+
+.nft-form {
+  margin: 5px;
+  padding: 10px;
+  display: flexbox;
+  padding: 50px;
 }
 
 .payment-toggle {
@@ -159,7 +178,6 @@
  padding: 1%;
  margin-bottom: 1%;
  background-color: white;
-
 }
 
 .payment-toggle-drip {
@@ -182,5 +200,46 @@
   height: 350px;
 }
 
-/* custom */
- 
+/* custom @media queries here */
+ @media screen and (min-device-width: 375px) 
+ and (max-device-width: 812px) 
+ and (-webkit-min-device-pixel-ratio: 3)
+ and (orientation: portrait) { 
+
+  .balance h4{
+    max-width: 90%;
+    margin-bottom: 1.5%;
+    font-size: 100%;
+  }
+
+  .fountain-stake h4{
+    max-width: 90%;
+    margin-bottom: 1.5%;
+    font-size: 100%;
+  }
+  
+  .faucet-vault h4{
+    max-width: 90%;
+    margin-bottom: 1.5%;
+    font-size: 100%;
+  }
+
+  .payment-toggle {
+    width: 50%;
+    margin-bottom: 2%;
+   }
+
+  .payment-toggle-drip {
+    width: 50%;
+    margin-bottom: 2%;
+  }
+  
+}
+
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) 
+  and (-webkit-min-device-pixel-ratio: 3)
+  and (orientation: landscape) { 
+
+}

@@ -66,32 +66,36 @@ export const Home = (props) => {
             </div>
             <div className='display-container'>
                 
-                    {nftCollection.length > 1 ? 
-                        
-                        <div className='cards'>
-                            {nftCollection.map((nfts) =>
-                                <div key={nfts.finalHash}>
-                                <MDBCard style={{width: '18rem', maxWidth:'18rem', padding: '10px', margin: '10px', backgroundColor: '#2D7595'}}>
-                                    <MDBCardImage style={{height: '180px'}} src={nfts.meta.image} alt='...' position='top'/>
-                                    <MDBCardBody>
-                                        <MDBCardTitle>{nfts.meta.name}</MDBCardTitle>
-                                        <MDBCardText>{nfts.meta.description}</MDBCardText>
-                                        <MDBCardText>Minter: {nfts.meta.attributes[1].value}</MDBCardText>
-                                        <div className='card-buttons'>
-                                            <MDBBtn tag='a' href={nfts.finalHash} target='__blank'>IPFS JSON File</MDBBtn>
-                                            <br />
-                                            <MDBBtn tag='a' href={nfts.meta.image} target='__blank'>IPFS Image Hash</MDBBtn>
-                                        </div>
-                                    </MDBCardBody>
-                                </MDBCard>
-                                </div>
-                            )}
-                        </div>
-                        
-                    :
-                        <div> Sorry. no nfts found ...</div>
-                    }
-                
+                {nftCollection.length > 100 ? 
+                    
+                    <div className='cards'>
+                        {nftCollection.map((nfts) =>
+                            <div key={nfts.finalHash}>
+                            <MDBCard style={{width: '18rem', maxWidth:'18rem', padding: '10px', margin: '10px', backgroundColor: '#2D7595'}}>
+                                <MDBCardImage style={{height: '180px'}} src={nfts.meta.image} alt='...' position='top'/>
+                                <MDBCardBody>
+                                    <MDBCardTitle>{nfts.meta.name}</MDBCardTitle>
+                                    <MDBCardText>{nfts.meta.description}</MDBCardText>
+                                    <MDBCardText>Minter: {nfts.meta.attributes[1].value}</MDBCardText>
+                                    <div className='card-buttons'>
+                                        <MDBBtn tag='a' href={nfts.finalHash} target='__blank'>IPFS JSON File</MDBBtn>
+                                        <br />
+                                        <MDBBtn tag='a' href={nfts.meta.image} target='__blank'>IPFS Image Hash</MDBBtn>
+                                    </div>
+                                </MDBCardBody>
+                            </MDBCard>
+                            </div>
+                        )}
+                    </div>
+                    
+                :
+                <div className='containter-none'>
+                    <div> You dont have any nfts yet. ...</div>
+                    <MDBCardImage style={{height: '330px'}} src='/duck.jpg' alt='...' position='top'/>
+                    <MDBBtn id='minter-none' tag='a' href='/upload'>Mint One Here</MDBBtn> 
+                    </div>
+                }
+                <br/>
             </div>
         </div>
     )

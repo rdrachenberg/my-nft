@@ -14,7 +14,7 @@ module.exports = {
                 
                 console.log(posts);
 
-                res.send(posts);
+                res.send(posts.reverse());
             })
             .catch(next);       
     },

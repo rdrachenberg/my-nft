@@ -16,6 +16,7 @@ import { Upload } from './components/Upload';
 import { Home } from './components/Home';
 import { Welcome } from './components/Welcome';
 import { About } from './components/About';
+import { Footer } from './components/Footer';
 
 
 
@@ -102,6 +103,11 @@ function App() {
             :
               <></>
             }
+
+            <div>
+            <Footer />
+            </div>
+            
           </WagmiConfig>
           
         <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
