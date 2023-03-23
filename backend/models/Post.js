@@ -4,8 +4,7 @@ const Model = mongoose.model;
 const { String, Array, Number, Boolean, ObjectId } = Schema.Types;
 
 const postSchema = new Schema({
-
-  
+    
     meta: {
 
         name: {
@@ -45,8 +44,10 @@ const postSchema = new Schema({
         required: false,
     },
 
-   
-
+    drip: {
+        type: Number,
+        require: true,
+    },
 });
 
 module.exports = new Model('Post', postSchema);

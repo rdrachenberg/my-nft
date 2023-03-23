@@ -4,19 +4,21 @@ import { ethers } from 'ethers';
 import { Balance } from "./Balance";
 import { myNFTAddress } from "./MyNFTAddress";
 import { stakeViewer } from "../helpers/stakeHelper";
+import { bnbStakeViewer } from "../helpers/bnbStakeHelper";
 
 
 
 export const Home = (props) => {
     
     const [staker, setStaker] = useState('');
+    const [bnbStaker, setBNBStaker] = useState('');
 
     const MyNFTContractAddress =  myNFTAddress();
     
     const account = props.account;
     const abi = require('../artifacts/contracts/Art.sol/Art.json').abi;
 
-    const [dripSentToVault, setDripSentToVault] = useState(props.dripSentToVault);
+    const [dripSentToVault, setDripSentToVault] = useState(0);
     const [nftCollection, setNFTCollection] = useState([])
     
     const getNFTs = async () => {
@@ -24,7 +26,35 @@ export const Home = (props) => {
         const jsonData = await data.json();
         
         setNFTCollection(jsonData);
+        let drip = await addDrip(jsonData);
+        console.log(drip);
+        setDripSentToVault(drip);
         console.log(jsonData);
+    }
+
+    const addDrip = async (data) => {
+            console.log(data)
+            let temp = [];
+
+            for(let i = 0; i < data.length; i++) {
+                let balance = data[i].drip;
+                
+                if(balance === undefined || balance === null) {
+                    balance = 0;
+                }
+                // console.log(balance);
+                temp.push(balance);
+            }
+
+            let finalSum = await temp.reduce((a1, a2) => {
+                return a1 + a2
+            })
+            
+            // console.log(finalSum);
+            temp = []; // cleanup
+            return finalSum
+
+        
     }
     
     // console.log(dripSentToVault);
@@ -44,7 +74,13 @@ export const Home = (props) => {
     useState( async () => {
         const stake = await stakeViewer();
         setStaker(stake)
-        console.log(props)
+        
+    }, [])
+    
+    useState( async () => {
+        const bnbStake = await bnbStakeViewer();
+        setBNBStaker(bnbStake)
+        
     }, [])
 
     useEffect(() => {
@@ -58,8 +94,11 @@ export const Home = (props) => {
             <h3>Your connected account is</h3>
             <p>{account}</p>
             <Balance account={account}/>
+            <div className='balance'>
+                <h4>BNB Locked in Reservoir: {bnbStaker}</h4>
+            </div>
             <div className='fountain-stake'>
-                <h4>Drops Locked in Fountain: {staker}</h4>
+                <h4>Drops Locked in Reservoir: {staker}</h4>
             </div>
             <div className='faucet-vault'>
                 <h4>Sent to Drip Faucet Vault: {dripSentToVault}</h4>
@@ -87,13 +126,12 @@ export const Home = (props) => {
                     </div>
                     
                 :
-                <div className='containter-none'>
-                    <div> You dont have any nfts yet. ...</div>
-                    <MDBCardImage style={{height: '330px'}} src='/duck.jpg' alt='...' position='top'/>
-                    <MDBBtn id='minter-none' tag='a' href='/upload'>Mint One Here</MDBBtn> 
+                    <div className='containter-none'>
+                        <div> You dont have any nfts yet. ...</div>
+                        <MDBCardImage style={{height: '330px'}} src='/duck.jpg' alt='...' position='top'/>
+                        <MDBBtn id='minter-none' tag='a' href='/upload'>Mint One Here</MDBBtn> 
                     </div>
                 }
-                <br/>
             </div>
         </div>
     )

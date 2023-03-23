@@ -144,8 +144,8 @@ export const Upload = (props) => {
             body: JSON.stringify({
                 meta: JSON.parse(body),
                 finalHash: `http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`,
-                chainHash: sendToChain[0].transactionHash
-            
+                chainHash: sendToChain[0].transactionHash,
+                drip: addDripSentToValut
             })
         }
         // set array to hold data. Will be used to send to the server for account nft mint data
