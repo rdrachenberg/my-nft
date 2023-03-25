@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import './App.css';
 import { EthereumClient, modalConnectors, walletConnectProvider } from '@web3modal/ethereum'
-import { Web3Button, Web3Modal } from '@web3modal/react'
+import { useWeb3Modal, Web3Button, Web3Modal } from '@web3modal/react'
 import { configureChains, createClient, WagmiConfig, useAccount, useDisconnect } from 'wagmi'
 import { bsc, localhost } from 'wagmi/chains'
 import {ToastContainer} from 'react-toastify';
@@ -44,7 +44,9 @@ const wagmiClient = createClient({
 
 const ethereumClient = new EthereumClient(wagmiClient, chains);
 
+
 function App() {
+  const { isOpen, open, close } = useWeb3Modal();
   const [collection, setCollection] = useState([]);
   const [activateEdit, setActivateEdit] = useState(false);
   const [loggedIn, setLoggedIn] =  useState(false);
@@ -73,9 +75,10 @@ function App() {
         // handleDripChange();
       } else {  
         Toaster('fail', 'Wallet disonnected')
+        close();
         
       } 
-  }, [isConnected, setDripSentToVault, dripSentToVault]);
+  }, [isConnected, setDripSentToVault, dripSentToVault, close]);
 
   
   return (

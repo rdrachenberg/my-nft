@@ -19,6 +19,7 @@ export const Home = (props) => {
     const abi = require('../artifacts/contracts/Art.sol/Art.json').abi;
 
     const [dripSentToVault, setDripSentToVault] = useState(0);
+    const [bnbSentToResevior, setBNBSentToResevior] = useState(0);
     const [nftCollection, setNFTCollection] = useState([])
     
     const getNFTs = async () => {
@@ -26,35 +27,64 @@ export const Home = (props) => {
         const jsonData = await data.json();
         
         setNFTCollection(jsonData);
-        let drip = await addDrip(jsonData);
+        let drip = await addValues(jsonData);
         console.log(drip);
         setDripSentToVault(drip);
+        console.log('is this hit here')
+        let bnbValue = await addBNBValues(jsonData);
+        console.log(bnbValue);
+        setBNBSentToResevior(bnbValue)
+
         console.log(jsonData);
     }
 
-    const addDrip = async (data) => {
-            console.log(data)
-            let temp = [];
+    const addValues = async (data) => {
+        console.log(data)
+        let temp = [];
 
-            for(let i = 0; i < data.length; i++) {
-                let balance = data[i].drip;
-                
-                if(balance === undefined || balance === null) {
-                    balance = 0;
-                }
-                // console.log(balance);
-                temp.push(balance);
-            }
-
-            let finalSum = await temp.reduce((a1, a2) => {
-                return a1 + a2
-            })
+        for(let i = 0; i < data.length; i++) {
+            let balance = data[i].drip;
             
-            // console.log(finalSum);
-            temp = []; // cleanup
-            return finalSum
+            if(balance === undefined || balance === null) {
+                balance = 0;
+            }
+            // console.log(balance);
+            temp.push(balance);
+        }
 
+        let finalSum = await temp.reduce((a1, a2) => {
+            return a1 + a2
+        })
         
+        // console.log(finalSum);
+        temp = []; // cleanup
+        
+        return finalSum 
+    }
+    
+    const addBNBValues = async (data) => {
+        console.log(data)
+        let temp = [];
+
+        for(let i = 0; i < data.length; i++) {
+            let balance = data[i].bnbValue;
+            
+            if(balance === undefined || balance === null) {
+                balance = 0;
+            }
+            // console.log(balance);
+            temp.push(balance);
+        }
+
+        let finalSum = await temp.reduce((a1, a2) => {
+            return a1 + a2
+        })
+        // console.log(finalSum, 'is here');
+        const formatFinalSum = ethers.utils.formatEther(finalSum.toString());
+        // console.log(formatFinalSum);
+        temp = []; // cleanup
+        
+        return formatFinalSum 
     }
     
     // console.log(dripSentToVault);
@@ -93,7 +123,7 @@ export const Home = (props) => {
             <h2>Welcome to My-NFT</h2>
             <Balance account={account}/>
             <div className='balance'>
-                <h4>BNB Locked in Reservoir: {bnbStaker}</h4>
+                <h4>BNB Locked in Reservoir: {bnbSentToResevior}</h4>
             </div>
             <div className='fountain-stake'>
                 <h4>Drops Locked in Reservoir: {staker}</h4>

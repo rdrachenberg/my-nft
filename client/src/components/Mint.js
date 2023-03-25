@@ -54,7 +54,7 @@ export async function MyMint(myNFTTokenURI, paymentToggle, setDripSentToVault, d
             const data = await contract.mint(myNFTTokenURI, paymentToggle, { value: BNBValueToPass._hex });;
             console.log(data);
             const receipt = await data.wait();
-            const modData = [receipt, tx.drip? tx.drip: null];
+            const modData = [receipt, tx.drip? tx.drip: null, BNBValueToPass._hex];
 
             if(data) {
                 Toaster('success', 'Minted NFT hash: ' + data.hash, '3000');

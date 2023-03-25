@@ -9,22 +9,22 @@ const postSchema = new Schema({
 
         name: {
             type: String,
-            required: false,
+            required: true,
         },
         
         description: {
             type: String,
-            required: false,
+            required: true,
         },
 
         image: {
             type: String,
-            required: false,
+            required: true,
         },
 
         external_url: {
             type: String,
-            required: false,
+            required: true,
         },
 
         attributes: {
@@ -36,15 +36,20 @@ const postSchema = new Schema({
 
     finalHash: {
         type: String,
-        required: false,
+        required: true,
     },
     
     chainHash: {
         type: String,
-        required: false,
+        required: true,
     },
 
     drip: {
+        type: Number,
+        require: true,
+    },
+    
+    bnbValue: {
         type: Number,
         require: true,
     },

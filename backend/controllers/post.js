@@ -20,9 +20,9 @@ module.exports = {
     },
 
     post: (req, res, next) => {
-        const {meta, finalHash, chainHash, drip} = req.body;
+        const {meta, finalHash, chainHash, drip, bnbValue} = req.body;
         console.log(req.body);
-        models.Post.create({meta, finalHash, chainHash, drip}).then((createdTransaction) => {
+        models.Post.create({meta, finalHash, chainHash, drip, bnbValue}).then((createdTransaction) => {
             console.log(createdTransaction);
             res.send(createdTransaction);
 

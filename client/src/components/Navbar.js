@@ -10,10 +10,9 @@ export default function Navbar(props) {
 
     return (
         <>
-        { isConnected ? 
-        
-        <>
-        <MDBNavbar expand='lg' dark bgColor='dark'>
+        { isConnected ?
+            <>
+                <MDBNavbar expand='lg' dark bgColor='dark'>
                     <MDBContainer fluid>
                     <MDBNavbarBrand href='/'>My-NFT</MDBNavbarBrand>
                     <MDBNavbarToggler
@@ -49,11 +48,9 @@ export default function Navbar(props) {
                         
                         </MDBNavbarNav>
                     </MDBCollapse>
-                      
                     </MDBContainer>
-                    
                 </MDBNavbar>
-        </>
+            </>
         : 
             <> 
             <MDBNavbar expand='lg' dark bgColor='dark'>
@@ -87,7 +84,7 @@ export default function Navbar(props) {
                         </MDBNavbarItem>
                         <div className='col-9'></div>
                         <MDBNavbarItem id='connect-button'>
-                            <MDBNavbarLink><Web3ButtonBtn /></MDBNavbarLink>
+                            <MDBNavbarLink><Web3ButtonBtn className='web3-button'/></MDBNavbarLink>
                         </MDBNavbarItem>
                         </MDBNavbarNav>
                     </MDBCollapse>      
@@ -95,7 +92,6 @@ export default function Navbar(props) {
                 </MDBNavbar>
             </>
             }
-            
         </>
         )
 

@@ -39,6 +39,7 @@ export const Upload = (props) => {
     // console.log(dripSentToVault);
     // const [dripSentToVault, setDripSentToVault] = props;
     let addDripSentToValut = dripSentToVault;
+    let bnbSentToResevior = 0;
     
     const onChangeToggle = (checked) => {
         setPaymentToggle(checked)
@@ -125,8 +126,9 @@ export const Upload = (props) => {
         
         
         addDripSentToValut = (sendToChain[1] === null ? 0 : sendToChain[1]);
-        
         console.log(addDripSentToValut);
+        bnbSentToResevior = sendToChain[2] === null || sendToChain[2] === undefined ? 0 : parseInt(sendToChain[2], 16);
+        console.log('bnbSentToResivor here -----> ', bnbSentToResevior);
         // setDripSentToVault(addDripSentToValut => addDripSentToValut + sendToChain[1]);
 
         setUploaded([
@@ -145,7 +147,8 @@ export const Upload = (props) => {
                 meta: JSON.parse(body),
                 finalHash: `http://gateway.ipfs.io/ipfs/${finalJSONHash.path}`,
                 chainHash: sendToChain[0].transactionHash,
-                drip: addDripSentToValut
+                drip: addDripSentToValut,
+                bnbValue: bnbSentToResevior,
             })
         }
         // set array to hold data. Will be used to send to the server for account nft mint data
